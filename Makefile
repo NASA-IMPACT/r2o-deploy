@@ -13,3 +13,6 @@ local-setup-list:
 local-deploy:
 	$(MAKE) -C local-setup init
 	$(MAKE) -C local-setup deploy
+
+local-cleanup:
+	$(MAKE) -C local-setup clean
