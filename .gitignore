@@ -1,3 +1,5 @@
+# Sensitive envs
+.env
 # Local .terraform directories
 **/.terraform/*
 
