@@ -21,3 +21,7 @@ plan:
 
 list:
 	@grep '^[^#[:space:]].*:' Makefile
+
+clean:
+	tofu destroy --auto-approve
+	kind delete cluster --name ${TF_VAR_cluster_name}
