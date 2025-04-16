@@ -1,9 +1,7 @@
 variable "cluster_name" {
   description = "Name of the kind cluster"
   type        = string
-
 }
-
 
 variable "http_ingress_port" {
   type    = number
@@ -33,24 +31,10 @@ variable "target_branch" {
   default     = "main"
 }
 
-variable "argocd_applications" {
-  type = list(object({
-    app_name      = string
-    project_name  = string
-    repo_url      = string
-    target_path   = string
-    target_branch = string
-    namespace     = optional(string, "default")
-  }))
-  description = "List of ArgoCD applications to create"
-  default = [{
-    app_name      = "nginx-app"
-    project_name  = "default"
-    repo_url      = "https://github.com/amarouane-ABDELHAK/eks-apps"
-    target_path   = "app/nginx_app"
-    target_branch = "main"
-    namespace     = "default"
-  }]
+variable "repo_url" {
+  type        = string
+  description = "Repo URL"
+  default     = "https://github.com/amarouane-ABDELHAK/eks-apps"
 }
 
 variable "target_path" {
@@ -59,9 +43,14 @@ variable "target_path" {
   default     = "app/nginx_app"
 }
 
+# Add this variable declaration
+variable "argocd_apps_file" {
+  type        = string
+  description = "Path to JSON file containing ArgoCD applications configuration"
+  default     = "argocd-apps.json"
+}
+
+# Ensure this locals block comes after the variable declarations
 locals {
-  # Read applications from the JSON file in the parent directory
-  argocd_applications = fileexists("${path.root}/../${var.argocd_apps_file}") ? 
-                         jsondecode(file("${path.root}/../${var.argocd_apps_file}")) : 
-                         var.argocd_applications
+  argocd_applications = fileexists("${path.root}/../${var.argocd_apps_file}") ? jsondecode(file("${path.root}/../${var.argocd_apps_file}")) : var.argocd_applications
 }
