@@ -58,3 +58,10 @@ variable "target_path" {
   description = "Target app"
   default     = "app/nginx_app"
 }
+
+locals {
+  # Read applications from the JSON file in the parent directory
+  argocd_applications = fileexists("${path.root}/../${var.argocd_apps_file}") ? 
+                         jsondecode(file("${path.root}/../${var.argocd_apps_file}")) : 
+                         var.argocd_applications
+}
