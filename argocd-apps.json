@@ -1,0 +1,18 @@
+[
+    {
+      "app_name": "nginx-app",
+      "project_name": "default",
+      "repo_url": "https://github.com/amarouane-ABDELHAK/eks-apps",
+      "target_path": "app/nginx_app",
+      "target_branch": "main",
+      "namespace": "default"
+    },
+    {
+      "app_name": "k8s-demo",
+      "project_name": "test",
+      "repo_url": "https://github.com/Caden-Helbling/k8s-demo.git",
+      "target_path": "app/",
+      "target_branch": "main",
+      "namespace": "test"
+    }
+  ]

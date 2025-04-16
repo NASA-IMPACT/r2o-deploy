@@ -25,32 +25,33 @@ resource "null_resource" "argocd-ingess" {
 }
 
 
-resource "local_file" "argocd-github-conf-template" {
-
+resource "local_file" "argocd-github-conf-templates" {
+  for_each = { for idx, app in var.argocd_applications : app.app_name => app }
+  
   content = templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl",
     {
-      app_name      = var.app_name
-      project_name  = var.project_name
-      repo_url      = var.repo_url
-      target_path   = var.target_path
-      target_branch = var.target_branch
-
+      app_name      = each.value.app_name
+      project_name  = each.value.project_name
+      repo_url      = each.value.repo_url
+      target_path   = each.value.target_path
+      target_branch = each.value.target_branch
+      namespace     = lookup(each.value, "namespace", "default")
     }
-
-
   )
-  filename = "${path.root}/argocd/argocd-conf/argocd-github-app.yaml"
+  filename = "${path.root}/argocd/argocd-conf/argocd-${each.value.app_name}-app.yaml"
 }
 
 resource "null_resource" "argocd-github-conf" {
-  depends_on = [null_resource.argocd-ingess, local_file.argocd-github-conf-template]
+  for_each = { for idx, app in var.argocd_applications : app.app_name => app }
+  
+  depends_on = [null_resource.argocd-ingess, local_file.argocd-github-conf-templates]
+  
   triggers = {
-    config_hash = sha256(file("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl"))
-
-
+    config_hash = sha256(jsonencode(each.value))
   }
+  
   provisioner "local-exec" {
     working_dir = "./argocd"
-    command     = "kubectl apply -f ./argocd-conf/argocd-github-app.yaml"
+    command     = "kubectl apply -f ./argocd-conf/argocd-${each.value.app_name}-app.yaml"
   }
 }

@@ -1,10 +1,7 @@
 variable "cluster_name" {
   description = "Name of the kind cluster"
   type        = string
-  default     = "chelbling"
-
 }
-
 
 variable "http_ingress_port" {
   type    = number
@@ -16,31 +13,13 @@ variable "https_ingress_port" {
   default = 4444
 }
 
-variable "app_name" {
+variable "argocd_apps_file" {
   type        = string
-  description = "github Application Name"
-  default     = "nginx-app"
+  description = "Path to JSON file containing ArgoCD applications configuration"
+  default     = "argocd-apps.json"
 }
 
-variable "project_name" {
-  type        = string
-  description = "ArgoCD Project Name"
-  default     = "default"
-}
-
-variable "target_branch" {
-  type        = string
-  description = "Target Branch Name"
-  default     = "main"
-}
-
-variable "repo_url" {
-  type        = string
-  description = "Repo URL"
-  default     = "https://github.com/amarouane-ABDELHAK/eks-apps"
-}
-variable "target_path" {
-  type        = string
-  description = "Target app"
-  default     = "app/nginx_app"
+# Add a local variable to handle the JSON file
+locals {
+  argocd_applications = fileexists(var.argocd_apps_file) ? jsondecode(file(var.argocd_apps_file)) : []
 }
