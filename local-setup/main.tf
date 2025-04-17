@@ -8,7 +8,5 @@ module "kind" {
 module "argocd" {
   source              = "./argocd"
   depends_on          = [module.kind]
-  argocd_applications = local.argocd_applications
+  argocd_applications = var.argocd_applications
 }
-
-

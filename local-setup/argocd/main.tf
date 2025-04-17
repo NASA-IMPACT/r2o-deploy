@@ -42,7 +42,6 @@ resource "local_file" "argocd-github-conf-templates" {
 }
 
 resource "null_resource" "argocd-github-conf" {
-  for_each = { for idx, app in var.argocd_applications : app.app_name => app }
   
   depends_on = [null_resource.argocd-ingess, local_file.argocd-github-conf-templates]
   
