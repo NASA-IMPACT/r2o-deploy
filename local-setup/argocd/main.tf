@@ -25,6 +25,28 @@ resource "null_resource" "argocd-ingess" {
 }
 
 
+
+locals {
+    all_applications = join("\n---\n", [
+    for app in var.argocd_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
+      app_name      = app.app_name
+      project_name  = app.project_name
+      repo_url      = app.repo_url
+      target_branch = app.target_branch
+      target_path   = app.target_path
+    })
+  ])
+}
+
+
+# Create a single file containing all applications
+resource "local_file" "all_argocd_applications" {
+  filename = "${path.root}/argocd/argocd-conf/all-applications.yaml"
+  content  = local.all_applications
+}
+
+
+
 resource "local_file" "argocd-github-conf-template" {
 
   content = templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl",

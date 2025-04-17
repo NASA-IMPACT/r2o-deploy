@@ -14,6 +14,7 @@ module "argocd" {
   repo_url      = var.repo_url
   target_path   = var.target_path
   target_branch = var.target_branch
+  argocd_applications = var.argocd_applications
 }
 
 
