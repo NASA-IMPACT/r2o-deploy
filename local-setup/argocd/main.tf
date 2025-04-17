@@ -20,7 +20,7 @@ resource "null_resource" "argocd-ingess" {
   depends_on = [helm_release.argocd, helm_release.argocd]
   provisioner "local-exec" {
     working_dir = "./argocd"
-    command     = "kubectl apply -f ./argocd-conf/argocd-ingress.yaml"
+    command     = "sleep 30 && kubectl apply -f ./argocd-conf/argocd-ingress.yaml"
   }
 }
 

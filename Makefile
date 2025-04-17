@@ -2,7 +2,7 @@
 SHELL := /bin/bash
 
 -include .env
-
+export
 
 .PHONY:
 	clean
@@ -23,4 +23,6 @@ local-deploy: .env
 
 local-cleanup: .env
 	$(MAKE) -C local-setup clean
+test-env: .env
+	$(MAKE) -C local-setup test-env
 
