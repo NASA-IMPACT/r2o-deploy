@@ -5,7 +5,7 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   create_namespace = true
   values           = [file("${path.root}/argocd/argocd-conf/values.yaml")]
-  timeout = 1200 # Increase timeout to 1one hour
+  timeout          = 1200 # Increase timeout to 1 hour
 }
 
 resource "null_resource" "password" {
@@ -17,18 +17,28 @@ resource "null_resource" "password" {
 }
 
 resource "null_resource" "argocd-ingess" {
-  depends_on = [helm_release.argocd, helm_release.argocd]
+  depends_on = [helm_release.argocd]
   provisioner "local-exec" {
     working_dir = "./argocd"
     command     = "sleep 30 && kubectl apply -f ./argocd-conf/argocd-ingress.yaml"
   }
 }
 
-
-
 locals {
-    all_applications = join("\n---\n", [
-    for app in var.argocd_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
+  # Combine the default application with the list of additional applications
+  combined_applications = concat(
+    length(var.argocd_applications) > 0 ? var.argocd_applications : [{
+      app_name      = var.app_name
+      project_name  = var.project_name
+      repo_url      = var.repo_url
+      target_path   = var.target_path
+      target_branch = var.target_branch
+      namespace     = "default"
+    }]
+  )
+
+  all_applications = join("\n---\n", [
+    for app in local.combined_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
       app_name      = app.app_name
       project_name  = app.project_name
       repo_url      = app.repo_url
@@ -38,41 +48,19 @@ locals {
   ])
 }
 
-
 # Create a single file containing all applications
 resource "local_file" "all_argocd_applications" {
   filename = "${path.root}/argocd/argocd-conf/all-applications.yaml"
   content  = local.all_applications
 }
 
-
-
-resource "local_file" "argocd-github-conf-template" {
-
-  content = templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl",
-    {
-      app_name      = var.app_name
-      project_name  = var.project_name
-      repo_url      = var.repo_url
-      target_path   = var.target_path
-      target_branch = var.target_branch
-
-    }
-
-
-  )
-  filename = "${path.root}/argocd/argocd-conf/argocd-github-app.yaml"
-}
-
 resource "null_resource" "argocd-github-conf" {
-  depends_on = [null_resource.argocd-ingess, local_file.argocd-github-conf-template]
+  depends_on = [null_resource.argocd-ingess, local_file.all_argocd_applications]
   triggers = {
-    config_hash = sha256(file("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl"))
-
-
+    config_hash = sha256(local.all_applications)
   }
   provisioner "local-exec" {
     working_dir = "./argocd"
-    command     = "kubectl apply -f ./argocd-conf/argocd-github-app.yaml"
+    command     = "kubectl apply -f ./argocd-conf/all-applications.yaml"
   }
 }

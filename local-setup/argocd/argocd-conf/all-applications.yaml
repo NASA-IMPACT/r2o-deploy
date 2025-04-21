@@ -24,14 +24,14 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx-apxscscp
+  name: k8s-demo
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/amarouane-ABDELHAK/cscscsc
-    targetRevision: cscsc
-    path: app/cscscsc
+    repoURL: https://github.com/Caden-Helbling/k8s-demo.git
+    targetRevision: main
+    path: app
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
