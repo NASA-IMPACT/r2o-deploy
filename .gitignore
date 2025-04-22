@@ -1,3 +1,6 @@
+# ArgoCD credentials 
+argocd-login.txt
+
 # Sensitive envs
 .env
 # Local .terraform directories

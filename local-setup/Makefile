@@ -25,3 +25,6 @@ list:
 clean:
 	tofu destroy --auto-approve
 	kind delete cluster --name ${TF_VAR_cluster_name}
+
+test-env:
+	echo ${PROJECT}
