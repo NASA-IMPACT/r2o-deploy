@@ -5,7 +5,6 @@ variable "cluster_name" {
 
 }
 
-
 variable "http_ingress_port" {
   type    = number
   default = 8888
