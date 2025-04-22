@@ -54,23 +54,4 @@ variable "argocd_applications" {
     namespace     = optional(string, "default")
   }))
   description = "List of ArgoCD applications to create"
-  # default = [{
-  #   app_name      = "nginx-app"
-  #   project_name  = "default"
-  #   repo_url      = "https://github.com/amarouane-ABDELHAK/eks-apps"
-  #   target_path   = "app/nginx_app"
-  #   target_branch = "main"
-  #   namespace     = "default"
-  # },
-  
-  # {
-  #   app_name      = "nginx-apxscscp"
-  #   project_name  = "default"
-  #   repo_url      = "https://github.com/amarouane-ABDELHAK/cscscsc"
-  #   target_path   = "app/cscscsc"
-  #   target_branch = "cscsc"
-  #   namespace     = "decscscfault"
-  # }
-  
-  # ]
 }
