@@ -35,3 +35,17 @@ variable "target_path" {
   description = "Repo target path"
 }
 
+variable "github_app_id" {
+  default = "1226282"
+  
+}
+
+variable "github_app_installation_id" {
+  default = "65085904"
+}
+
+variable "github_app_private_key" {
+  type = string
+  sensitive = true
+
+}

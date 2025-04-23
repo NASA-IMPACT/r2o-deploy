@@ -24,43 +24,60 @@ resource "null_resource" "argocd-ingess" {
   }
 }
 
-locals {
-  # Combine the default application with the list of additional applications
-  combined_applications = concat(
-    length(var.argocd_applications) > 0 ? var.argocd_applications : [{
-      app_name      = var.app_name
-      project_name  = var.project_name
-      repo_url      = var.repo_url
-      target_path   = var.target_path
-      target_branch = var.target_branch
-      namespace     = "default"
-    }]
-  )
 
-  all_applications = join("\n---\n", [
-    for app in local.combined_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
-      app_name      = app.app_name
-      project_name  = app.project_name
-      repo_url      = app.repo_url
-      target_branch = app.target_branch
-      target_path   = app.target_path
-    })
-  ])
-}
+resource "kubernetes_manifest" "argocd_app" {
+  for_each = { for app in var.argocd_applications : app.app_name => app }
 
-# Create a single file containing all applications
-resource "local_file" "all_argocd_applications" {
-  filename = "${path.root}/argocd/argocd-conf/all-applications.yaml"
-  content  = local.all_applications
-}
-
-resource "null_resource" "argocd-github-conf" {
-  depends_on = [null_resource.argocd-ingess, local_file.all_argocd_applications]
-  triggers = {
-    config_hash = sha256(local.all_applications)
-  }
-  provisioner "local-exec" {
-    working_dir = "./argocd"
-    command     = "kubectl apply -f ./argocd-conf/all-applications.yaml"
+  manifest = {
+    apiVersion = "argoproj.io/v1alpha1"
+    kind       = "Application"
+    metadata = {
+      name      = each.value.app_name
+      namespace = "argocd"
+    }
+    spec = {
+      project = each.value.project_name
+      source = {
+        repoURL        = each.value.repo_url
+        targetRevision = each.value.target_branch
+        path           = each.value.target_path
+      }
+      destination = {
+        server    = "https://kubernetes.default.svc"
+        namespace = "default"
+      }
+      syncPolicy = {
+        automated = {
+          prune    = true
+          selfHeal = true
+        }
+        syncOptions = [
+          "CreateNamespace=true"
+        ]
+      }
+    }
   }
 }
+
+resource "kubernetes_secret" "argocd_github_app" {
+  metadata {
+    name      = "github-app-credentials"
+    namespace = "argocd"
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repo"
+    }
+  }
+
+  type = "Opaque"
+
+  data = {
+    url                      = base64encode("https://github.com")
+    githubAppID              = base64encode(var.github_app_id)
+    githubAppInstallationID = base64encode(var.github_app_installation_id)
+    githubAppPrivateKey     = base64encode(var.github_app_private_key)
+  }
+}
+
+
+
+
