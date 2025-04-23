@@ -9,6 +9,10 @@ spec:
     repoURL: ${repo_url}
     targetRevision: ${target_branch}
     path: ${target_path}
+    # Add this section to reference the GitHub App credentials
+    githubAppCredentials:
+      applicationID: ${github_app_id}
+      installationID: ${github_app_installation_id}
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
@@ -18,4 +22,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-

@@ -8,3 +8,12 @@ server:
   - --insecure
   - --rootpath=/argocd
   - --basehref=/argocd
+
+# Add GitHub App credentials configuration
+configs:
+  credentialTemplates:
+    github-app:
+      githubApp:
+        id: "${github_app_id}"
+        installationID: "${github_app_installation_id}"
+        privateKey: "${github_app_private_key}"

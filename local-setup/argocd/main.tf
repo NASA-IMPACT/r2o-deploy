@@ -1,11 +1,21 @@
+resource "local_file" "argocd_values" {
+  filename = "${path.root}/argocd/argocd-conf/values.yaml"
+  content = templatefile("${path.root}/argocd/argocd-conf/values.yaml.tmpl", {
+    github_app_id             = var.github_app_id
+    github_app_installation_id = var.github_app_installation_id
+    github_app_private_key    = var.github_app_private_key
+  })
+}
+
 resource "helm_release" "argocd" {
   name             = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
-  values           = [file("${path.root}/argocd/argocd-conf/values.yaml")]
+  values           = [local_file.argocd_values.content]
   timeout          = 1200 # Increase timeout to 1 hour
+  depends_on       = [local_file.argocd_values]
 }
 
 resource "null_resource" "password" {
@@ -34,6 +44,8 @@ locals {
       target_path   = var.target_path
       target_branch = var.target_branch
       namespace     = "default"
+      github_app_id = var.github_app_id
+      github_app_installation_id = var.github_app_installation_id
     }]
   )
 
@@ -44,6 +56,8 @@ locals {
       repo_url      = app.repo_url
       target_branch = app.target_branch
       target_path   = app.target_path
+      github_app_id = var.github_app_id
+      github_app_installation_id = var.github_app_installation_id
     })
   ])
 }
