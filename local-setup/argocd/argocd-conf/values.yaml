@@ -2,9 +2,35 @@ global:
   image:
     tag: "latest"
 
-
 server:
   extraArgs:
   - --insecure
   - --rootpath=/argocd
   - --basehref=/argocd
+
+configs:
+  repositories:
+    github:
+      url: https://github.com/NASA-IMPACT/research-to-operations
+      githubAppID: "12345"
+      githubAppInstallationID: "6789410"
+      githubAppPrivateKey: |
+        -----BEGIN RSA PRIVATE KEY-----
+        loremipsumdolorMIIEpAIBAAKCAQEAtCj4ZukPMqPELGIhPYdYiH0b+vJKFSX9l
+        YatK66w+dFvCgxK3dKCnX/hoKun9MklHqiPIUjEX8+knROBHsmG7sMMsBd9SlBnf
+        HYCw11+ywjAwzTfLKhi2qRAs6lTgd61Pb4rIR3gaKFJaEXgV3sXslBEZvwVBzeEP
+        1vmSO8Pctb8YT+/Wr0HM/PJG3wnV6pj/3xMs4oSzuQB3Z6omf3+y0vBV0iqcMkb9
+        UgzMgL9mH3sgh1Iq2EWPmBVBrQBEcC/G0pOGpJLfYGi53/dSf5ENffTmr1Z1U+gS
+        cs1ibc3c5u4Vx9l/HB3AnIn7sVdCYsYa84OB2wIDAQABAoIBAQCh5VNbv0G+AvaN
+        39z5GsBPXwYe204BdTNNqsiUFkJaMkCXZ3hNNo3L/OveynqgKNidQKVIE8UgE0dJ
+        whpZZXBlk+JveGymc1lajoMI1EqiOE5P8nPSYkwILuJHqOCh+epjOPQkNvn11jIk
+        uaRxmuhheScgZuizXBNjLr9rS3a0dTS8iiEJ/L2mIKzTNarW+nyfNDEoJ4SZ7pbk
+        YA/FhUPW0k2tm7m9du9SxLVlKp8f/vzFbtqZq95aKt/Ma32v8oEFFsxJVP5NoHHb
+        SXU9jlombNj7e2CdJoBaMfAnSJ15GPjP5YS5RVNFG/s0Ol943qnkx7EvLl33Zep7
+        j2eC7wY27DSMv8oaatGoaD8CgYEAnomu9OSDs/wLMHsbeQGx4jwZP1dPqnMxR5tc
+        5GfqjnClpFVbLs+Zkpm4nhQcFYsK4Fp+FEm6MdmWPx1XIAzYrwpQKS218KWvmLu7
+        BJv59u314wwocjIbgWs90IYBBkf+x9+8Y5OAhwzaVQDGLBKuBloBcr3bwuP6/J2E
+        WjpzuMkCgYAQPtJmhfgdT5T5UOhf6aCTaFsej15jR6QNvzEM7OhZDuTD6vlqPI6O
+        lZgh2KvC1YD4B+uNRLu8s1JbE3yc/DFGsHq77o3dafzUb00dE6hKUtSlST9Mox5n
+        zYZl6tLxPo/yowcyJv+wVA/2H3r1sGWKdVAl7NI4Su7XJ4FCI8E3pg==
+        -----END RSA PRIVATE KEY-----

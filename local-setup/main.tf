@@ -16,5 +16,3 @@ module "argocd" {
   target_branch = var.target_branch
   argocd_applications = var.argocd_applications
 }
-
-
