@@ -15,6 +15,7 @@ module "argocd" {
   target_path   = var.target_path
   target_branch = var.target_branch
   argocd_applications = var.argocd_applications
+  github_app_private_key = var.github_app_private_key
 }
 
 

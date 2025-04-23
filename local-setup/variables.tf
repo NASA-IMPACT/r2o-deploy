@@ -55,3 +55,9 @@ variable "argocd_applications" {
   }))
   description = "List of ArgoCD applications to create"
 }
+
+variable "github_app_private_key" {
+  description = "GitHub App Private Key"
+  type        = string
+  sensitive   = true
+}
