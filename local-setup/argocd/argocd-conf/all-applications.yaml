@@ -29,9 +29,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/Caden-Helbling/k8s-demo.git
+    repoURL: https://github.com/Caden-Helbling/k8s-demo
     targetRevision: main
-    path: app
+    path: app/
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default

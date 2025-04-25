@@ -30,8 +30,33 @@ variable "repo_url" {
   type        = string
   description = "Repo URL"
 }
+
 variable "target_path" {
   type        = string
   description = "Repo target path"
 }
 
+variable "github_app_id" {
+  type        = string
+  description = "GitHub App ID used for repository access"
+  default     = ""
+}
+
+variable "github_app_installation_id" {
+  type        = string
+  description = "GitHub App Installation ID used for repository access"
+  default     = ""
+}
+
+variable "github_app_private_key" {
+  type        = string
+  description = "GitHub App Private Key used for repository access"
+  default     = ""
+  sensitive   = true
+}
+
+variable "github_app_private_key_path" {
+  type        = string
+  description = "Path to GitHub App Private Key file"
+  default     = ""
+}
