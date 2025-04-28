@@ -1,3 +1,7 @@
+# macOS
+.DS_Store
+
+
 # ArgoCD credentials 
 argocd-login.txt
 
