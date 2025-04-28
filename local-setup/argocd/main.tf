@@ -2,17 +2,11 @@ locals {
   # Read the private key from a file if a path is provided
   github_app_private_key = var.github_app_private_key_path != "" ? file(var.github_app_private_key_path) : var.github_app_private_key
 
-  # Combine the default application with the list of additional applications
-  combined_applications = concat(
-    length(var.argocd_applications) > 0 ? var.argocd_applications : [{
-      app_name      = var.app_name
-      project_name  = var.project_name
-      repo_url      = var.repo_url
-      target_path   = var.target_path
-      target_branch = var.target_branch
-      namespace     = "default"
-    }]
-  )
+  # Ensure we have at least one application defined
+  validate_applications = length(var.argocd_applications) > 0 ? true : tobool("At least one ArgoCD application must be defined")
+  
+  # Use applications list directly
+  combined_applications = var.argocd_applications
 
   # Create sanitized repository names that comply with RFC 1123 (lowercase alphanumeric + dots and dashes)
   sanitized_repos = {
