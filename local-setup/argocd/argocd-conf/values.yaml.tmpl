@@ -12,33 +12,13 @@ server:
 configs:
   repositories:
     %{ for idx, app in argocd_applications }
+    %{ if contains(keys(app), "private") && app.private }
     github-repo-${idx}:
       type: git
       url: ${app.repo_url}
-      %{ if contains(keys(app), "private") && app.private }
       githubAppID: "${github_app_id}"
       githubAppInstallationID: "${github_app_installation_id}"
       githubAppPrivateKey: |
         ${indent(8, github_app_private_key)}
-      %{ endif }
-    %{ endfor }
-
-  # Application definitions based on the provided variables
-  applications:
-    %{ for app in argocd_applications }
-    ${app.app_name}:
-      name: ${app.app_name}
-      namespace: argocd
-      project: ${app.project_name}
-      source:
-        repoURL: ${app.repo_url}
-        targetRevision: ${app.target_branch}
-        path: ${app.target_path}
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: ${app.namespace != null ? app.namespace : "default"}
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
+    %{ endif }
     %{ endfor }
