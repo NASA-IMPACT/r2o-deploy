@@ -1,5 +1,5 @@
 locals {
-  github_app_private_key = file("/home/ec2-user/.ssh/research-to-operation-argocd.2025-04-22.private-key.pem")
+  github_app_private_key = file(var.github_app_private_key_path)
   all_applications = join("\n---\n", [
     for app in var.argocd_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
       app_name      = app.app_name

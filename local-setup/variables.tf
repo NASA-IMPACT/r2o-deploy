@@ -28,11 +28,6 @@ variable "argocd_applications" {
   default = []
 }
 
-variable "github_app_private_key" {
-  description = "GitHub App Private Key"
-  type        = string
-}
-
 variable "github_app_id" {
   description = "GitHub App ID"
   type        = string
@@ -43,4 +38,10 @@ variable "github_app_installation_id" {
   description = "GitHub App Installation ID"
   type        = string
   default        = "65085904"
+}
+
+variable "path_to_github_app_private_key" {
+  description = "Path to the GitHub App Private Key"
+  type        = string
+  default = "/home/ec2-user/.ssh/github-app-key.pem"
 }
