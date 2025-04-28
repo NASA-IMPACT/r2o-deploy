@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# values
+local-setup/argocd/argocd-conf/values.yaml
+
 
 # ArgoCD credentials 
 argocd-login.txt
