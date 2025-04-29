@@ -1,0 +1,27 @@
+name: AWS OIDC Authentication and S3 Bucket Listing
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ test-oidc-workflow ]
+
+jobs:
+  list-s3-buckets:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::244822573120:role/r2o-oidc
+          aws-region: us-west-2 
+
+      - name: List S3 buckets
+        run: |
+          echo "Listing S3 buckets:"
+          aws s3 ls
+          echo "Detailed S3 bucket information:"
+          aws s3api list-buckets --query "Buckets[].Name" --output table
