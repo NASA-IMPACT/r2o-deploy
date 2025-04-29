@@ -2,7 +2,8 @@ name: AWS OIDC Authentication and S3 Bucket Listing
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
+    branches: [ test-oidc-workflow ]
 
 jobs:
   list-s3-buckets:
