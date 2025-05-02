@@ -1,10 +1,9 @@
+// cloud-setup/lambda-function/index.js
+// Existing code from your repository
 const https = require('https');
 const http = require('http');
 const url = require('url');
 
-/**
- * Lambda function that acts as a proxy to restricted servers
- */
 exports.handler = async (event) => {
   console.log('Event:', JSON.stringify(event, null, 2));
   
@@ -58,9 +57,6 @@ exports.handler = async (event) => {
   }
 };
 
-/**
- * Helper function to make HTTP/HTTPS requests with the specified protocol
- */
 function makeRequest(protocol, options, body) {
   return new Promise((resolve, reject) => {
     const req = protocol.request(options, (res) => {

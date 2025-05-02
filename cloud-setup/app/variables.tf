@@ -10,34 +10,14 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "create_vpc" {
-  description = "Whether to create a new VPC or use an existing one"
-  type        = bool
-  default     = true
-}
-
-variable "existing_vpc_id" {
-  description = "ID of an existing VPC to use if create_vpc is false"
+variable "vpc_state_bucket" {
+  description = "S3 bucket containing the VPC state file"
   type        = string
-  default     = ""
 }
 
-variable "existing_private_subnet_ids" {
-  description = "List of existing private subnet IDs to use if create_vpc is false"
-  type        = list(string)
-  default     = []
-}
-
-variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+variable "vpc_state_key" {
+  description = "Key of the VPC state file in the S3 bucket"
   type        = string
-  default     = "10.0.0.0/16"
-}
-
-variable "availability_zones" {
-  description = "List of availability zones to deploy resources in"
-  type        = list(string)
-  default     = ["us-west-2a", "us-west-2b"]
 }
 
 variable "lambda_function_name" {

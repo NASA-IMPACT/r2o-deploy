@@ -2,36 +2,65 @@
 # Define shell for consistent behavior
 SHELL := /bin/bash
 
-# Variables
-BACKEND_CONF ?= lambda-backend.conf
-TFVARS_FILE ?= lambda.tfvars
-
 # Main targets
-.PHONY: init plan apply destroy clean validate list update-lockfile
+.PHONY: vpc-init vpc-plan vpc-apply vpc-destroy app-init app-plan app-apply app-destroy deploy-all destroy-all clean
 
-init:
-	tofu init -backend-config=$(BACKEND_CONF)
+# VPC targets
+vpc-init:
+	cd vpc && $(MAKE) init
 
-# Safely update the lock file when needed
-update-lockfile:
-	tofu init -backend-config=$(BACKEND_CONF) -upgrade
+vpc-plan:
+	cd vpc && $(MAKE) plan
 
-plan:
-	tofu plan -var-file=$(TFVARS_FILE)
+vpc-apply:
+	cd vpc && $(MAKE) apply
 
-apply:
-	tofu apply -var-file=$(TFVARS_FILE)
+vpc-destroy:
+	cd vpc && $(MAKE) destroy
 
-destroy:
-	tofu destroy -var-file=$(TFVARS_FILE)
+# App targets
+app-init:
+	cd app && $(MAKE) init
 
+app-plan:
+	cd app && $(MAKE) plan
+
+app-apply:
+	cd app && $(MAKE) apply
+
+app-destroy:
+	cd app && $(MAKE) destroy
+
+# Combined targets
+deploy-all: vpc-apply app-apply
+
+destroy-all: app-destroy vpc-destroy
+
+# General targets
 clean:
-	rm -rf .terraform
-	rm -f terraform.tfstate*
-	rm -f lambda-function/proxy-lambda.zip
-
-validate:
-	tofu validate
+	cd vpc && $(MAKE) clean
+	cd app && $(MAKE) clean
 
 list:
-	@grep '^[^#[:space:]].*:' Makefile
+	@echo "VPC Commands:"
+	@cd vpc && $(MAKE) -s | sed 's/^/  vpc-/'
+	@echo "App Commands:"
+	@cd app && $(MAKE) -s | sed 's/^/  app-/'
+	@echo "Combined Commands:"
+	@grep '^deploy\|^destroy\|^clean\|^list:' Makefile | grep -v grep
+
+# Add to cloud-setup/Makefile
+check-state-lock:
+	@echo "⚠️ WARNING: No state locking is configured. Make sure nobody else is running Terraform commands."
+	@echo "Continue? (y/n)"
+	@read -r REPLY; \
+	if [ "$$REPLY" != "y" ]; then \
+		echo "Operation cancelled."; \
+		exit 1; \
+	fi
+
+vpc-apply: check-state-lock
+	cd vpc && $(MAKE) apply
+
+app-apply: check-state-lock
+	cd app && $(MAKE) apply
