@@ -1,0 +1,28 @@
+# Add `runs-on: self-hosted` to your workflow's YAML to send jobs to this runner.
+name: CI/CD Pipeline
+on:
+  push:
+
+
+jobs:
+    build:
+        runs-on: self-hosted
+        name: Build 
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Run test pull
+          run: |
+            echo "Running tests..."
+            ls -lah
+
+    deploy:
+        runs-on: self-hosted
+        needs: build
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Deploy to neo server
+          run: |
+            echo "Deploying to production server..."
