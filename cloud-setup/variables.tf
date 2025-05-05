@@ -10,24 +10,6 @@ variable "environment" {
   default     = "dev"
 }
 
-# variable "create_vpc" {
-#   description = "Whether to create a new VPC or use an existing one"
-#   type        = bool
-#   default     = true
-# }
-
-# variable "existing_vpc_id" {
-#   description = "ID of an existing VPC to use if create_vpc is false"
-#   type        = string
-#   default     = ""
-# }
-
-# variable "existing_private_subnet_ids" {
-#   description = "List of existing private subnet IDs to use if create_vpc is false"
-#   type        = list(string)
-#   default     = []
-# }
-
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
@@ -73,5 +55,24 @@ variable "lambda_environment_variables" {
 variable "target_server" {
   description = "Target server to proxy to"
   type        = string
-  default     = "http:///35.163.154.91:9999"
+  default     = "http://35.163.154.91:9999"
+}
+
+# ALB variables
+variable "enable_https" {
+  description = "Whether to enable HTTPS listener"
+  type        = bool
+  default     = false
+}
+
+variable "enable_https_redirect" {
+  description = "Whether to redirect HTTP to HTTPS"
+  type        = bool
+  default     = false
+}
+
+variable "certificate_arn" {
+  description = "ARN of the ACM certificate for HTTPS"
+  type        = string
+  default     = ""
 }

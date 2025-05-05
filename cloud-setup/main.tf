@@ -21,7 +21,7 @@ locals {
 }
 
 # Lambda Module
-module "lambda" {  # Changed from "app" to "lambda" to match outputs.tf
+module "lambda" {
   source = "./app"
   
   aws_region           = var.aws_region
@@ -35,4 +35,26 @@ module "lambda" {  # Changed from "app" to "lambda" to match outputs.tf
   # Reference VPC state via S3 backend
   vpc_state_bucket = "r2o-tf-state-bucket"
   vpc_state_key    = "vpc/terraform.tfstate"
+}
+
+# ALB Module
+module "alb" {
+  source = "./alb"
+  
+  aws_region      = var.aws_region
+  environment     = var.environment
+  alb_name        = "${var.lambda_function_name}-alb"
+  
+  # Reference state files
+  vpc_state_bucket    = "r2o-tf-state-bucket"
+  vpc_state_key       = "vpc/terraform.tfstate"
+  lambda_state_bucket = "r2o-tf-state-bucket"
+  lambda_state_key    = "app/terraform.tfstate"
+  
+  # HTTPS configuration
+  enable_https         = var.enable_https
+  enable_https_redirect = var.enable_https_redirect
+  certificate_arn      = var.certificate_arn
+  
+  depends_on = [module.lambda]
 }
