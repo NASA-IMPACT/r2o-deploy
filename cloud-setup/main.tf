@@ -1,28 +1,38 @@
-# This should deploy app as well from the cloud-setup directory
-
-# Data source to get the existing VPC if we're not creating one
-data "aws_vpc" "existing" {
-  count = var.create_vpc ? 0 : 1
-  id    = var.existing_vpc_id
+# Data source to read the VPC remote state
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+  config = {
+    bucket = "r2o-tf-state-bucket"
+    key    = "vpc/terraform.tfstate"
+    region = var.aws_region
+  }
 }
 
-# Data source to get existing private subnets if we're not creating a VPC
-data "aws_subnet" "existing_private" {
-  count = var.create_vpc ? 0 : length(var.existing_private_subnet_ids)
-  id    = var.existing_private_subnet_ids[count.index]
-}
-# Create Lambda function
-module "lambda" {
-  source = "./lambda"
-
-  function_name         = var.lambda_function_name
-  runtime               = var.lambda_runtime
-  memory_size           = var.lambda_memory_size
-  timeout               = var.lambda_timeout
-  environment_variables = local.lambda_env_vars
-  environment           = var.environment
+# Local values 
+locals {
+  # Always reference the remote VPC state
+  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
+  private_subnets = data.terraform_remote_state.vpc.outputs.private_subnet_ids
   
-  # VPC configuration
-  vpc_id     = local.vpc_id
-  subnet_ids = local.private_subnets
+  lambda_env_vars = {
+    ENVIRONMENT   = var.environment
+    TARGET_SERVER = var.target_server
+  }
+}
+
+# Lambda Module
+module "lambda" {  # Changed from "app" to "lambda" to match outputs.tf
+  source = "./app"
+  
+  aws_region           = var.aws_region
+  environment          = var.environment
+  lambda_function_name = var.lambda_function_name
+  lambda_runtime       = var.lambda_runtime
+  lambda_memory_size   = var.lambda_memory_size
+  lambda_timeout       = var.lambda_timeout
+  lambda_environment_variables = local.lambda_env_vars
+  
+  # Reference VPC state via S3 backend
+  vpc_state_bucket = "r2o-tf-state-bucket"
+  vpc_state_key    = "vpc/terraform.tfstate"
 }

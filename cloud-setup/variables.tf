@@ -10,23 +10,23 @@ variable "environment" {
   default     = "dev"
 }
 
-variable "create_vpc" {
-  description = "Whether to create a new VPC or use an existing one"
-  type        = bool
-  default     = true
-}
+# variable "create_vpc" {
+#   description = "Whether to create a new VPC or use an existing one"
+#   type        = bool
+#   default     = true
+# }
 
-variable "existing_vpc_id" {
-  description = "ID of an existing VPC to use if create_vpc is false"
-  type        = string
-  default     = ""
-}
+# variable "existing_vpc_id" {
+#   description = "ID of an existing VPC to use if create_vpc is false"
+#   type        = string
+#   default     = ""
+# }
 
-variable "existing_private_subnet_ids" {
-  description = "List of existing private subnet IDs to use if create_vpc is false"
-  type        = list(string)
-  default     = []
-}
+# variable "existing_private_subnet_ids" {
+#   description = "List of existing private subnet IDs to use if create_vpc is false"
+#   type        = list(string)
+#   default     = []
+# }
 
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
@@ -70,8 +70,8 @@ variable "lambda_environment_variables" {
   default     = {}
 }
 
-variable "target_servers" {
-  description = "List of restricted servers to proxy to"
-  type        = list(string)
-  default     = []
+variable "target_server" {
+  description = "Target server to proxy to"
+  type        = string
+  default     = "http:///35.163.154.91:9999"
 }

@@ -1,7 +1,6 @@
 provider "aws" {
   region = var.aws_region
 
-  # Optional settings for assuming roles or other provider-level configurations
   default_tags {
     tags = {
       Environment = var.environment
@@ -11,7 +10,6 @@ provider "aws" {
   }
 }
 
-# AWS Provider version constraints
 terraform {
   required_providers {
     aws = {
@@ -20,4 +18,7 @@ terraform {
     }
   }
   required_version = ">= 1.0"
+  
+  # Backend configuration for the root level
+  backend "s3" {}
 }

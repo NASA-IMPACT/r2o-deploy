@@ -27,14 +27,3 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets (created or existing)"
   value       = local.private_subnets
 }
-
-output "vpc_details" {
-  description = "Details of the created VPC (if applicable)"
-  value       = var.create_vpc ? {
-    vpc_id              = module.vpc.vpc_id
-    public_subnet_ids   = module.vpc.public_subnet_ids
-    private_subnet_ids  = module.vpc.private_subnet_ids
-    nat_gateway_id      = module.vpc.nat_gateway_id
-    vpc_cidr_block      = module.vpc.vpc_cidr_block
-  } : null
-}

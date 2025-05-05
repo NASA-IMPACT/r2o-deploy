@@ -20,8 +20,8 @@ terraform {
   }
   required_version = ">= 1.0"
   
-  # Backend configuration will be injected through the backend.conf file
-  backend "s3" {}
+  # # Backend configuration will be injected through the backend.conf file
+  # backend "s3" {}
 }
 
 # Read VPC outputs from remote state
@@ -114,13 +114,7 @@ resource "aws_lambda_function" "proxy_lambda" {
 
   # Environment variables
   environment {
-    variables = merge(
-      {
-        ENVIRONMENT = var.environment,
-        TARGET_SERVERS = join(",", var.target_servers)
-      },
-      var.lambda_environment_variables
-    )
+    variables = var.lambda_environment_variables
   }
 
   depends_on = [
