@@ -36,3 +36,14 @@ module "lambda" {
   vpc_state_bucket = "r2o-tf-state-bucket"
   vpc_state_key    = "vpc/terraform.tfstate"
 }
+
+# API Gateway Module
+module "api_gateway" {
+  source = "./api-gateway"
+  
+  aws_region           = var.aws_region
+  environment          = var.environment
+  api_name             = "rest-proxy"
+  lambda_function_name = module.lambda.lambda_function_name
+  lambda_invoke_arn    = module.lambda.lambda_invoke_arn
+}

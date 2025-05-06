@@ -27,3 +27,19 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets (created or existing)"
   value       = local.private_subnets
 }
+
+# API Gateway outputs
+output "api_gateway_id" {
+  description = "ID of the API Gateway"
+  value       = module.api_gateway.api_id
+}
+
+output "api_gateway_invoke_url" {
+  description = "URL to invoke the API Gateway"
+  value       = module.api_gateway.invoke_url
+}
+
+output "api_gateway_stage" {
+  description = "Stage name of the API Gateway"
+  value       = module.api_gateway.api_stage_name
+}

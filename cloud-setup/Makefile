@@ -53,6 +53,20 @@ vpc-plan:
 vpc-apply:
 	cd vpc && $(MAKE) apply
 
+# API Gateway operations
+api-gateway-init:
+	cd api-gateway && $(MAKE) init
+
+api-gateway-plan:
+	cd api-gateway && $(MAKE) plan
+
+api-gateway-apply:
+	cd api-gateway && $(MAKE) apply
+
+api-gateway-destroy:
+	cd api-gateway && $(MAKE) destroy
+
+
 # List available commands
 list:
 	@grep '^[a-zA-Z_-]*:' Makefile | sed 's/:.*//g' | sort
