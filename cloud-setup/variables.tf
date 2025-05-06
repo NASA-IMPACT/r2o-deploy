@@ -57,22 +57,3 @@ variable "target_server" {
   type        = string
   default     = "http://35.163.154.91:9999"
 }
-
-# ALB variables
-variable "enable_https" {
-  description = "Whether to enable HTTPS listener"
-  type        = bool
-  default     = false
-}
-
-variable "enable_https_redirect" {
-  description = "Whether to redirect HTTP to HTTPS"
-  type        = bool
-  default     = false
-}
-
-variable "certificate_arn" {
-  description = "ARN of the ACM certificate for HTTPS"
-  type        = string
-  default     = ""
-}

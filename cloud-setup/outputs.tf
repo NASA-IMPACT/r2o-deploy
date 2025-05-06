@@ -27,24 +27,3 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets (created or existing)"
   value       = local.private_subnets
 }
-
-# ALB outputs
-output "alb_dns_name" {
-  description = "DNS name of the Application Load Balancer"
-  value       = module.alb.alb_dns_name
-}
-
-output "alb_zone_id" {
-  description = "Zone ID of the Application Load Balancer"
-  value       = module.alb.alb_zone_id
-}
-
-output "alb_http_url" {
-  description = "HTTP URL of the Application Load Balancer"
-  value       = "http://${module.alb.alb_dns_name}"
-}
-
-output "alb_https_url" {
-  description = "HTTPS URL of the Application Load Balancer (if HTTPS is enabled)"
-  value       = var.enable_https ? "https://${module.alb.alb_dns_name}" : null
-}
