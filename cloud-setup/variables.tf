@@ -55,5 +55,5 @@ variable "lambda_environment_variables" {
 variable "target_server" {
   description = "Target server to proxy to"
   type        = string
-  default     = "http://35.163.154.91:9999"
+  default     = "https://kind.neo.nsstc.uah.edu:4449"
 }
