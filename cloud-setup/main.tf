@@ -47,3 +47,18 @@ module "api_gateway" {
   lambda_function_name = module.lambda.lambda_function_name
   lambda_invoke_arn    = module.lambda.lambda_invoke_arn
 }
+
+# CloudFront Module - Updated to use direct outputs
+module "cloudfront" {
+  source = "./cloudfront"
+  
+  aws_region         = var.aws_region
+  environment        = var.environment
+  origin_id          = "r2o-api-tf"
+  
+  # Fix the domain format - extract only the hostname part without protocol and path
+  api_gateway_domain = replace(
+    replace(module.api_gateway.invoke_url, "/^https?:\\/\\//", ""),
+    "/\\/.*$/", ""
+  )
+}

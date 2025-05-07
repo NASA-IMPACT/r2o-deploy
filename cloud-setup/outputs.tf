@@ -43,3 +43,14 @@ output "api_gateway_stage" {
   description = "Stage name of the API Gateway"
   value       = module.api_gateway.api_stage_name
 }
+
+# CloudFront outputs
+output "cloudfront_distribution_id" {
+  description = "ID of the CloudFront distribution"
+  value       = module.cloudfront.cloudfront_distribution_id
+}
+
+output "cloudfront_domain_name" {
+  description = "Domain name of the CloudFront distribution"
+  value       = module.cloudfront.cloudfront_domain_name
+}

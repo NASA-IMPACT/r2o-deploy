@@ -19,6 +19,6 @@ terraform {
   }
   required_version = ">= 1.0"
   
-  # Backend configuration for the root level
-  backend "s3" {}
+  # Remove this block:
+  # backend "s3" {}
 }
