@@ -10,20 +10,14 @@ provider "aws" {
   }
 }
 
-# Remove this terraform block if it exists
-# terraform {
-#   backend "s3" {}
-# }
+# Use AWS-managed policies
+data "aws_cloudfront_cache_policy" "caching_disabled" {
+  name = "Managed-CachingDisabled"
+}
 
-# Remove this remote state data source
-# data "terraform_remote_state" "api_gateway" {
-#   backend = "s3"
-#   config = {
-#     bucket = var.state_bucket
-#     key    = var.api_gateway_state_key
-#     region = var.aws_region
-#   }
-# }
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
 
 # CloudFront distribution
 resource "aws_cloudfront_distribution" "api_distribution" {
@@ -33,13 +27,9 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   default_root_object = ""
   price_class         = "PriceClass_100"
 
-  # Use directly passed domain instead of remote state
   origin {
     domain_name = var.api_gateway_domain
     origin_id   = var.origin_id
-    
-    # Add origin path to point to the stage
-    origin_path = "/dev"
 
     custom_origin_config {
       http_port              = 80
@@ -51,21 +41,14 @@ resource "aws_cloudfront_distribution" "api_distribution" {
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
     target_origin_id = var.origin_id
 
-    forwarded_values {
-      query_string = true
-      cookies {
-        forward = "all"
-      }
-      headers = ["*"]
-    }
-
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
+    
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0
-    max_ttl                = 0
+    compress               = true  # Enable compression
   }
 
   restrictions {
