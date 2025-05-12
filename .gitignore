@@ -1,5 +1,6 @@
 # macOS
 .DS_Store
+.idea/
 
 # values
 local-setup/argocd/argocd-conf/values.yaml
