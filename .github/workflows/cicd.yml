@@ -21,14 +21,7 @@ jobs:
         run: |
           echo "Running tests..."
           ls -lah
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
-          cd /home/opkind/py-312-env
-          . .venv/bin/activate
-          python --version
-          uv add awscli
-          aws --version
+
 
   deploy:
     runs-on: self-hosted
@@ -42,7 +35,14 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::244822573120:role/r2o-oidc
           aws-region: us-west-2
-
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          cd /home/opkind/py-312-env
+          . .venv/bin/activate
+          python --version
+          uv add awscli
+          aws --version
       - name: List S3 buckets
         run: |
           echo "Listing S3 buckets:"
