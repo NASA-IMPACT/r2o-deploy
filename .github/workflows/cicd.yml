@@ -46,6 +46,7 @@ jobs:
       - name: List S3 buckets
         run: |
           echo "Listing S3 buckets:"
+          . .venv/bin/activate
           aws s3 ls
           echo "Detailed S3 bucket information:"
           aws s3api list-buckets --query "Buckets[].Name" --output table
