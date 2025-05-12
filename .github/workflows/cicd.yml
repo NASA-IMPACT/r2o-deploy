@@ -43,11 +43,24 @@ jobs:
           role-to-assume: arn:aws:iam::244822573120:role/r2o-oidc
           aws-region: us-west-2
 
+      - name: Get secret from AWS Secrets Manager and create .env file
+        env:
+          SECRET_NAME: r20-deployment-dev
+          $AWS_REGION: us-west-2
+        run: |
+          SECRET_STRING=$(aws secretsmanager get-secret-value \
+            --secret-id "$SECRET_NAME" \
+            --region "$AWS_REGION" \
+            --query SecretString \
+            --output text)
+          echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
+
       - name: List S3 buckets
         run: |
           echo "Listing S3 buckets:"
           cd /home/opkind/py-312-env
           . .venv/bin/activate
+          cat .env
           aws s3 ls
           echo "Detailed S3 bucket information:"
           aws s3api list-buckets --query "Buckets[].Name" --output table
