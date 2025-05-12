@@ -1,0 +1,39 @@
+# Add `runs-on: self-hosted` to your workflow's YAML to send jobs to this runner.
+name: CI/CD Pipeline
+on:
+  push:
+
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run test pull
+        run: |
+          echo "Running tests..."
+          ls -lah
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          cd /home/opkind/py-312-env
+          . .venv/bin/activate
+          python --version
+          uv add awscli
+          aws --version
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to neo server
+        run: |
+          echo "Deploying to production server..."
+          kubectl get pods -n argocd
+          kind get clusters
+
