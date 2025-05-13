@@ -23,7 +23,7 @@ local-deploy: .env
 	@source ./deploy.sh && \
 	cd local-setup && \
 	generate_terraform_variables && \
-	check_create_remote_state $AWS_REGION $LOCAL_DEPLOY_STATE_BUCKET_NAME $LOCAL_DEPLOY_STATE_DYNAMO_TABLE
+	check_create_remote_state ${AWS_REGION} ${LOCAL_DEPLOY_STATE_BUCKET_NAME} ${LOCAL_DEPLOY_STATE_DYNAMO_TABLE}
 	$(MAKE) -C local-setup init
 	$(MAKE) -C local-setup deploy
 
