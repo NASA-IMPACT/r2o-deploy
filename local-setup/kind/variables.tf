@@ -12,3 +12,8 @@ variable "http_ingress_port" {
 variable "https_ingress_port" {
   type = number
 }
+
+
+variable "kind_experimental_provider" {
+  type = string
+}

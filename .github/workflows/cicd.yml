@@ -69,7 +69,5 @@ jobs:
 
       - name: Deploy to neo server
         run: |
-          echo "Deploying to production server..."
-          kubectl get pods -n argocd
-          kind get clusters
-
+          make local-deploy
+        
