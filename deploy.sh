@@ -14,6 +14,7 @@ function create_state_bucket {
 function create_dynamo_db {
   # $1 region
   # $2 table_name
+
   aws dynamodb create-table \
     --table-name $2 \
     --attribute-definitions AttributeName=LockID,AttributeType=S \

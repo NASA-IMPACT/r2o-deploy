@@ -70,5 +70,6 @@ jobs:
 
       - name: Deploy to neo server
         run: |
+          source ${{ vars.PYTHON_VENV_PATH }}
           make local-deploy
         
