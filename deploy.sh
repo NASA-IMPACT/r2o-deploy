@@ -44,7 +44,7 @@ function check_create_remote_state {
 
   bucketstatus=$(aws s3api head-bucket --bucket $STATE_BUCKET_NAME  2>&1)
   table_exists=$(aws dynamodb describe-table --table-name  $STATE_DYNAMO_TABLE --region $AWS_REGION  2>&1)
-
+  echo $table_exists
   if echo "${table_exists}" | grep "An error";
   then
     echo "Creating dynamodb table for TF state"
