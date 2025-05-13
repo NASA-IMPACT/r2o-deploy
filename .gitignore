@@ -52,3 +52,5 @@ terraform.rc
 
 terraform.tf
 terraform.tfvars
+# Configuration
+local-setup/kind/config.yaml
