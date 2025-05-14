@@ -37,6 +37,7 @@ resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
   triggers   = {
     ingress_config_hash = sha256(file("${path.root}/kind/ingress-nginx.yaml"))
+    lets_trigger        = true
   }
   provisioner "local-exec" {
     working_dir = "./kind"
