@@ -48,7 +48,7 @@ resource "null_resource" "setup-kind-ingress" {
   }
 }
 
-resource "null_resource" "setup-kind-ingress" {
+resource "null_resource" "try-this-first" {
 
   triggers = {
     lets_trigger = "yes"
