@@ -40,6 +40,6 @@ resource "null_resource" "setup-kind-ingress" {
   }
   provisioner "local-exec" {
     working_dir = "./kind"
-    command     = "kind export kubeconfig --name ${var.cluster_name} && kubectl apply -f ingress-nginx.yaml"
+    command     = "kind export kubeconfig --name ${var.cluster_name} && kubectl apply -f ingress-nginx.yaml && kubectl get pods"
   }
 }
