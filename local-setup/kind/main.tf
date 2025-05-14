@@ -24,7 +24,7 @@ resource "null_resource" "setup-kind" {
     # Conditional command based on use_podman variable
     command     = var.kind_experimental_provider == "podman" ? (
     # When the experimental provider is podman
-    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml && kind export kubeconfig --name ${var.cluster_name}"
+    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml && kind export kubeconfig --name ${var.cluster_name} --kubeconfig=/home/opkind/kubeconfig"
     ) : (
     # Default to docker
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
@@ -41,6 +41,9 @@ resource "null_resource" "setup-kind-ingress" {
   }
   provisioner "local-exec" {
     working_dir = "./kind"
-    command     = "kubectl apply -f ingress-nginx.yaml && kubectl get pods"
+    environment = {
+      KUBECONFIG = "/home/opkind/kubeconfig"
+    }
+    command = "kubectl apply -f ingress-nginx.yaml && kubectl get pods"
   }
 }
