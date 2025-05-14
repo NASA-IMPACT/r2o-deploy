@@ -60,11 +60,6 @@ jobs:
             --output text)
           echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
 
-      - name: Local cleanup
-        run: |
-          source ${{ vars.PYTHON_VENV_PATH }}
-          make local-cleanup
-
       - name: Deploy to neo server
         run: |
           source ${{ vars.PYTHON_VENV_PATH }}
