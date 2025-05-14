@@ -60,13 +60,10 @@ jobs:
             --output text)
           echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
 
-      - name: List S3 buckets
+      - name: Local cleanup
         run: |
           source ${{ vars.PYTHON_VENV_PATH }}
-          cat .env
-          aws s3 ls
-          echo "Detailed S3 bucket information:"
-          aws s3api list-buckets --query "Buckets[].Name" --output table
+          make local-cleanup
 
       - name: Deploy to neo server
         run: |
