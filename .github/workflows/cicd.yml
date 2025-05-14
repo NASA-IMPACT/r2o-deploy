@@ -64,5 +64,7 @@ jobs:
         run: |
           whoami
           env
-
+          source ${{ vars.PYTHON_VENV_PATH }}
+          source /home/opkind/.bashrc
+          make local-deploy
         
