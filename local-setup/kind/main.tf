@@ -47,3 +47,17 @@ resource "null_resource" "setup-kind-ingress" {
     command = "kubectl apply -f ingress-nginx.yaml && kubectl get pods"
   }
 }
+
+resource "null_resource" "setup-kind-ingress" {
+
+  triggers = {
+    lets_trigger = "yes"
+  }
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    environment = {
+      KUBECONFIG = "/home/opkind/kubeconfig"
+    }
+    command = "kubectl get svc && kubectl get ingress"
+  }
+}
