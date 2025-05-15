@@ -12,22 +12,26 @@ resource "local_file" "kind-template" {
   filename = "${path.root}/kind/config.yaml"
 }
 
-
+data "external" "kind_cluster_check" {
+  program = ["bash", "${path.module}/scripts/check_cluster_exists.sh", var.cluster_name]
+}
 resource "null_resource" "setup-kind" {
   depends_on = [local_file.kind-template]
-  triggers   = {
-    config_hash = sha256(file("${path.root}/kind/config.yaml.tmpl"))
-  }
-  provisioner "local-exec" {
 
+  triggers = {
+    config_hash    = sha256(file("${path.root}/kind/config.yaml.tmpl"))
+    cluster_exists = data.external.kind_cluster_check.result["exists"]
+  }
+
+  provisioner "local-exec" {
+    when        = create
     working_dir = "./kind"
-    # Conditional command based on use_podman variable
-    command     = var.kind_experimental_provider == "podman" ? (
-    # When the experimental provider is podman
-    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml && kind export kubeconfig --name ${var.cluster_name} --kubeconfig=/home/opkind/.kube/config"
+    command     = data.external.kind_cluster_check.result["exists"] == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
+    var.kind_experimental_provider == "podman" ? (
+    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml"
     ) : (
-    # Default to docker
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
+    )
     )
   }
 }

@@ -72,5 +72,17 @@ function check_create_remote_state {
   fi
 }
 
+function check_kind_exists {
+# $1 cluster name
+CLUSTER_NAME = $1
+if kind get clusters | grep -q "${CLUSTER_NAME}"; then
+  echo "{\"exists\": true}"
+else
+  echo "{\"exists\": false}"
+fi
+}
+
+
 export -f generate_terraform_variables
 export -f check_create_remote_state
+export -f check_kind_exists
