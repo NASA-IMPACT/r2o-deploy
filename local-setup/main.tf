@@ -1,6 +1,6 @@
 module "kind" {
   source                     = "./kind"
-  cluster_name               = "${var.prefix}-${var.cluster_name}"
+  cluster_name               = var.cluster_name
   http_ingress_port          = var.http_ingress_port
   https_ingress_port         = var.https_ingress_port
   kind_experimental_provider = var.kind_experimental_provider
