@@ -13,7 +13,7 @@ resource "local_file" "kind-template" {
 }
 
 data "external" "kind_cluster_check" {
-  program = ["bash", "${path.module}/scripts/check_cluster_exists.sh", var.cluster_name]
+  program = ["bash", "${path.root}/scripts/check_cluster_exists.sh", var.cluster_name]
 }
 resource "null_resource" "setup-kind" {
   depends_on = [local_file.kind-template]
