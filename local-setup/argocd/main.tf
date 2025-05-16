@@ -40,7 +40,7 @@ resource "null_resource" "argocd-github-conf" {
 }
 
 
-resource "helm_release" "argocd" {
+resource "helm_release" "argocd_main" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
@@ -51,7 +51,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "null_resource" "password" {
-  depends_on = [helm_release.argocd]
+  depends_on = [helm_release.argocd_main]
   provisioner "local-exec" {
     working_dir = "./argocd"
     command     = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath={.data.password} | base64 -d > argocd-login.txt"
@@ -59,7 +59,7 @@ resource "null_resource" "password" {
 }
 
 resource "null_resource" "argocd-ingess" {
-  depends_on = [helm_release.argocd]
+  depends_on = [helm_release.argocd_main]
   provisioner "local-exec" {
     working_dir = "./argocd"
     command     = "sleep 30 && kubectl apply -f ./argocd-conf/argocd-ingress.yaml"
