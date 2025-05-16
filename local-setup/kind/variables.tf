@@ -27,5 +27,5 @@ variable "ssl_certificate_path" {
 }
 
 variable "ingress_namespaces" {
-  default = ["argocd"]
+  default = ["default", "argocd"]
 }
