@@ -3,7 +3,7 @@ locals {
   all_applications       = join("\n---\n", [
     for app in var.argocd_applications : templatefile("${path.root}/argocd/argocd-conf/argocd-github-app.yaml.tmpl", {
       app_name      = app.app_name
-      project_name  = try(app.project_name, "default")
+      project_name  = coalesce(app.project_name, "default")
       repo_url      = app.repo_url
       target_branch = app.target_branch
       target_path   = app.target_path
