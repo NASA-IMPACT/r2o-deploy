@@ -5,11 +5,10 @@ variable "argocd_applications" {
     repo_url      = string
     target_path   = string
     target_branch = string
-    private       = optional(bool, false)
-    namespace     = optional(string, "default")
+    private       = optional(bool)
   }))
   description = "List of ArgoCD applications to create"
-  default = []
+  default     = []
 }
 
 

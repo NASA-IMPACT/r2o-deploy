@@ -17,15 +17,22 @@ variable "https_ingress_port" {
 variable "argocd_applications" {
   type = list(object({
     app_name      = string
-    project_name  = string
+    project_name  = optional(string)
     repo_url      = string
     target_path   = string
     target_branch = string
-    private       = optional(bool, false)
-    namespace     = optional(string, "default")
+    private       = optional(bool)
   }))
   description = "List of ArgoCD applications to create"
-  default     = []
+  default     = [
+    {
+      app_name      = "nginx-app"
+      repo_url      = "https://github.com/NASA-IMPACT/r2o-fastapi-k8s"
+      target_path   = "fastapi-manifest"
+      target_branch = "use-ssl"
+      private       = true
+    }
+  ]
 }
 
 variable "github_app_id" {
