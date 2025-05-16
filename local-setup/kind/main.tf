@@ -64,7 +64,7 @@ resource "null_resource" "setup-certificate-secrets" {
     working_dir = "./kind"
     command     = <<-EOT
       kubectl get namespace ${each.key} || kubectl create namespace ${each.key}
-      kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path} -n ${each.key} --dry-run=client -o yaml | kubectl apply -f -
+      kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path} -n ${each.key}
     EOT
     interpreter = ["/bin/bash", "-c"]
   }

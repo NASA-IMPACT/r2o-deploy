@@ -41,14 +41,13 @@ resource "null_resource" "argocd-github-conf" {
 
 
 resource "helm_release" "argocd" {
-  name             = "argocd"
-  repository       = "https://argoproj.github.io/argo-helm"
-  chart            = "argo-cd"
-  namespace        = "argocd"
-  create_namespace = true
-  values           = [local_file.argocd_values.content]
-  timeout          = 1500 # Increase timeout to 1 hour
-  depends_on       = [local_file.argocd_values]
+  name       = "argocd"
+  repository = "https://argoproj.github.io/argo-helm"
+  chart      = "argo-cd"
+  namespace  = "argocd"
+  values     = [local_file.argocd_values.content]
+  timeout    = 1500 # Increase timeout to 1 hour
+  depends_on = [local_file.argocd_values]
 }
 
 resource "null_resource" "password" {
