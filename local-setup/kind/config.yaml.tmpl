@@ -4,8 +4,8 @@ nodes:
 - role: control-plane
   extraPortMappings:
   - containerPort: 80
-    hostPort: ${http_ingress_port}
+    hostPort: 8888
     protocol: TCP
   - containerPort: 443
-    hostPort: ${https_ingress_port}
+    hostPort: 4445
     protocol: TCP

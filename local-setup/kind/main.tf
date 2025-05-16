@@ -28,7 +28,7 @@ resource "null_resource" "setup-kind" {
     working_dir = "./kind"
     command     = data.external.kind_cluster_check.result["exists"] == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
     var.kind_experimental_provider == "podman" ? (
-    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml"
+    "KIND_EXPERIMENTAL_PROVIDER=podman && kind create cluster --name ${var.cluster_name} --config=config.yaml"
     ) : (
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
     )
