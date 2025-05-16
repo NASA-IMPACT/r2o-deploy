@@ -36,7 +36,9 @@ resource "null_resource" "setup-kind" {
   }
 }
 
-
+data "external" "get_pods" {
+  program = ["bash", "-c", "kubectl get pods"]
+}
 resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
   triggers   = {
@@ -45,7 +47,7 @@ resource "null_resource" "setup-kind-ingress" {
   }
   provisioner "local-exec" {
     working_dir = "./kind"
-    command     = "kubectl apply -f ingress-nginx.yaml && kubectl get pods"
+    command     = "kubectl get pods"
   }
 }
 
