@@ -3,9 +3,13 @@ kind: Ingress
 metadata:
   name: argo-ingress
   namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
-    - secretName: ingress-tls
+    - hosts:
+        - kind.neo.nsstc.uah.edu
+      secretName: ingress-tls
   rules:
     - host: kind.neo.nsstc.uah.edu
       http:
