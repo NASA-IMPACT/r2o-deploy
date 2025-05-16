@@ -41,7 +41,7 @@ resource "null_resource" "argocd-github-conf" {
 
 
 resource "helm_release" "argocd" {
-  name             = "argocd-amarouane"
+  name             = "argocd-helm"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   namespace        = "argocd"
