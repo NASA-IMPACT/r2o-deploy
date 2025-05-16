@@ -36,9 +36,6 @@ resource "null_resource" "setup-kind" {
   }
 }
 
-data "external" "get_pods" {
-  program = ["bash", "-c", "kubectl get pods"]
-}
 resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
   triggers   = {
