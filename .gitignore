@@ -1,5 +1,6 @@
 # macOS
 .DS_Store
+.idea/
 
 # values
 local-setup/argocd/argocd-conf/values.yaml
@@ -48,3 +49,8 @@ override.tf.json
 .terraformrc
 
 terraform.rc
+
+terraform.tf
+terraform.tfvars
+# Configuration
+local-setup/kind/config.yaml

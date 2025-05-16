@@ -17,31 +17,44 @@ variable "https_ingress_port" {
 variable "argocd_applications" {
   type = list(object({
     app_name      = string
-    project_name  = string
+    project_name  = optional(string)
     repo_url      = string
     target_path   = string
     target_branch = string
-    private       = optional(bool, false)
-    namespace     = optional(string, "default")
+    private       = optional(bool)
   }))
   description = "List of ArgoCD applications to create"
-  default = []
+  default     = [
+    {
+      app_name      = "nginx-app"
+      repo_url      = "https://github.com/NASA-IMPACT/r2o-fastapi-k8s"
+      target_path   = "fastapi-manifest"
+      target_branch = "use-ssl"
+      private       = true
+    }
+  ]
 }
 
 variable "github_app_id" {
   description = "GitHub App ID"
   type        = string
-  default        = "1226282"
 }
 
 variable "github_app_installation_id" {
   description = "GitHub App Installation ID"
   type        = string
-  default        = "65085904"
 }
 
 variable "path_to_github_app_private_key" {
   description = "Path to the GitHub App Private Key"
   type        = string
-  default = "/home/ec2-user/.ssh/github-app-key.pem"
+}
+
+variable "prefix" {
+  type = string
+}
+
+variable "kind_experimental_provider" {
+  type    = string
+  default = "podman"
 }
