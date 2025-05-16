@@ -28,7 +28,7 @@ resource "null_resource" "setup-kind" {
     working_dir = "./kind"
     command     = data.external.kind_cluster_check.result["exists"] == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
     var.kind_experimental_provider == "podman" ? (
-    "KIND_EXPERIMENTAL_PROVIDER=podman && kind create cluster --name ${var.cluster_name} --config=config.yaml"
+    "KIND_EXPERIMENTAL_PROVIDER=podman && systemd-run --scope --user -p \"Delegate=yes\" kind create cluster --name ${var.cluster_name} --config=config.yaml"
     ) : (
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
     )
@@ -41,7 +41,6 @@ resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
   triggers   = {
     ingress_config_hash = sha256(file("${path.root}/kind/ingress-nginx.yaml"))
-    lets_trigger        = "yes"
   }
   provisioner "local-exec" {
     working_dir = "./kind"
@@ -49,3 +48,15 @@ resource "null_resource" "setup-kind-ingress" {
   }
 }
 
+
+resource "null_resource" "setup-certificate-secrets" {
+  depends_on = [null_resource.setup-kind-ingress]
+  triggers   = {
+    private_key_hash = sha256(file(var.ssl_private_key_path))
+    certificate_hash = sha256(file(var.ssl_certificate_path))
+  }
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    command     = "kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path}"
+  }
+}
