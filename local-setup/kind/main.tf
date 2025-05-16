@@ -49,7 +49,7 @@ resource "null_resource" "setup-kind-ingress" {
 }
 
 
-resource "null_resource" "setup-certificate-secrets" {
+resource "null_resource" "setup-certificate-secrets-namespace" {
   for_each = toset(var.ingress_namespaces)
 
   depends_on = [null_resource.setup-kind-ingress]
@@ -63,5 +63,20 @@ resource "null_resource" "setup-certificate-secrets" {
   provisioner "local-exec" {
     working_dir = "./kind"
     command     = "kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path} -n ${each.key}"
+  }
+}
+
+resource "null_resource" "setup-certificate-secrets" {
+
+  depends_on = [null_resource.setup-kind-ingress]
+
+  triggers = {
+    private_key_hash = sha256(file(var.ssl_private_key_path))
+    certificate_hash = sha256(file(var.ssl_certificate_path))
+  }
+
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    command     = "kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path}"
   }
 }
