@@ -63,7 +63,5 @@ jobs:
       - name: Deploy to neo server
         run: |
           whoami
-          source ${{ vars.PYTHON_VENV_PATH }}
-          source /home/opkind/.bashrc
-          make local-deploy
+          KIND_EXPERIMENTAL_PROVIDER=podman && kind create cluster --name test-run --config=/home/opkind/config.yaml
         
