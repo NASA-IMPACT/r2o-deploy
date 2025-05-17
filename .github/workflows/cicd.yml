@@ -63,5 +63,5 @@ jobs:
       - name: Deploy to neo server
         run: |
           whoami
-          KIND_EXPERIMENTAL_PROVIDER=podman && kind create cluster --name test-run --config=/home/opkind/config.yaml
+          KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster --name test-run --config=/home/opkind/config.yaml
         
