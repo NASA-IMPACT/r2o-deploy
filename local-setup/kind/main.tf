@@ -23,13 +23,12 @@ resource "null_resource" "setup-kind" {
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = var.provision_kind_cluster == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
-    var.kind_experimental_provider == "podman" ? (
+    command     = var.kind_experimental_provider == "podman" ? (
     "KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster --name ${var.cluster_name} --config=config.yaml"
     ) : (
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
     )
-    )
+
   }
 }
 

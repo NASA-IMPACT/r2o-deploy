@@ -26,7 +26,3 @@ variable "github_app_private_key_path" {
   description = "Path to the GitHub App Private Key"
   type        = string
 }
-
-variable "provision_argocd" {
-  type = bool
-}

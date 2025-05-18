@@ -41,7 +41,6 @@ resource "null_resource" "argocd-github-conf" {
 
 
 resource "helm_release" "argocd" {
-  count            = var.provision_argocd == "true"? 1 : 0
   name             = "argocd-helm"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"

@@ -28,15 +28,13 @@ create-state: .env
 local-deploy: .env
 ifeq ($(TF_VAR_manual_setup),false)
 	$(MAKE) create-state
-	$(MAKE) -C local-setup init
-	$(MAKE) -C local-setup deploy
 else
-	@echo "Skipping automated deploy because TF_VAR_manual_setup is either true or unset"
+	@echo "Skipping creating the state TF_VAR_manual_setup is either true or unset"
+#	$(MAKE) -C local-setup init
+#	$(MAKE) -C local-setup deploy
 endif
 
-manual-setup: .env
-	$(MAKE) -C local-setup init
-	$(MAKE) -C local-setup deploy
+
 
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean

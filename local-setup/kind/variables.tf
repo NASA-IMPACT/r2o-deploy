@@ -29,6 +29,3 @@ variable "ingress_namespaces" {
   default = ["default", "argocd"]
 }
 
-variable "provision_kind_cluster" {
-  type = bool
-}
