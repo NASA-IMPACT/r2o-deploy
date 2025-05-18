@@ -19,6 +19,7 @@ init:
 plan:
 	tofu plan
 
+
 list:
 	@grep '^[^#[:space:]].*:' Makefile
 

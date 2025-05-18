@@ -27,3 +27,6 @@ variable "github_app_private_key_path" {
   type        = string
 }
 
+variable "provision_argocd" {
+  type = bool
+}

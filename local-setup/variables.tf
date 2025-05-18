@@ -58,3 +58,8 @@ variable "kind_experimental_provider" {
   type    = string
   default = "podman"
 }
+
+variable "manual_setup" {
+  type    = bool
+  default = false
+}

@@ -12,23 +12,20 @@ resource "local_file" "kind-template" {
   filename = "${path.root}/kind/config.yaml"
 }
 
-data "external" "kind_cluster_check" {
-  program = ["bash", "${path.root}/../scripts/check_cluster_exists.sh", var.cluster_name]
-}
+
 resource "null_resource" "setup-kind" {
   depends_on = [local_file.kind-template]
 
   triggers = {
-    config_hash    = sha256(file("${path.root}/kind/config.yaml.tmpl"))
-    cluster_exists = data.external.kind_cluster_check.result["exists"]
+    config_hash    = sha256(file("${path.root}/kind/config.yaml.tmpl"))]
   }
 
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = data.external.kind_cluster_check.result["exists"] == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
+    command     = var.provision_kind_cluster == "true" ? "echo 'Kind cluster already exists, skipping creation'" : (
     var.kind_experimental_provider == "podman" ? (
-    "KIND_EXPERIMENTAL_PROVIDER=podman && kind create cluster --name ${var.cluster_name} --config=config.yaml"
+    "KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster --name ${var.cluster_name} --config=config.yaml"
     ) : (
     "kind create cluster --name ${var.cluster_name} --config=config.yaml"
     )

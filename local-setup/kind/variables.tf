@@ -28,3 +28,7 @@ variable "ssl_certificate_path" {
 variable "ingress_namespaces" {
   default = ["default", "argocd"]
 }
+
+variable "provision_kind_cluster" {
+  type = bool
+}

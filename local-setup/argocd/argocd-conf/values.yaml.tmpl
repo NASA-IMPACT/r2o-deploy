@@ -8,7 +8,7 @@ server:
   - --insecure
   - --rootpath=/argocd
   - --basehref=/argocd
-
+% { if argocd_applications }
 configs:
   repositories:
     %{ for idx, app in argocd_applications }
@@ -22,3 +22,4 @@ configs:
         ${indent(8, github_app_private_key)}
     %{ endif }
     %{ endfor }
+%{ endif }

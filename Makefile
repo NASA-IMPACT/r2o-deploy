@@ -31,6 +31,12 @@ local-deploy: .env
 #	$(MAKE) -C local-setup init
 #	$(MAKE) -C local-setup deploy
 
+manual-setup: .env
+	$(MAKE) -C local-setup init
+	$(MAKE) -C local-setup deploy
+
+
+
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean
 
