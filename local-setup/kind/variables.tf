@@ -25,7 +25,4 @@ variable "ssl_certificate_path" {
   default = "/home/opkind/ssl_certs/bundle-cert-intermediates-root.cer"
 }
 
-variable "ingress_namespaces" {
-  default = ["default", "argocd"]
-}
 

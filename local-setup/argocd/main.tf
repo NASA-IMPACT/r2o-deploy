@@ -59,8 +59,26 @@ resource "null_resource" "password" {
   }
 }
 
-resource "null_resource" "argocd-ingess" {
+
+resource "null_resource" "setup-certificate-secrets" {
+
   depends_on = [helm_release.argocd]
+
+  triggers = {
+    private_key_hash = sha256(file(var.ssl_private_key_path))
+    certificate_hash = sha256(file(var.ssl_certificate_path))
+  }
+
+  provisioner "local-exec" {
+    working_dir = "./argocd"
+    command     = <<-EOT
+      kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path} -n argocd
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+resource "null_resource" "argocd-ingess" {
+  depends_on = [null_resource.setup-certificate-secrets, helm_release.argocd]
   provisioner "local-exec" {
     working_dir = "./argocd"
     command     = "sleep 30 && kubectl apply -f ./argocd-conf/argocd-ingress.yaml"

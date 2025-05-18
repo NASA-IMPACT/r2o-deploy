@@ -46,21 +46,18 @@ resource "null_resource" "setup-kind-ingress" {
 
 
 resource "null_resource" "setup-certificate-secrets" {
-  for_each = toset(var.ingress_namespaces)
 
   depends_on = [null_resource.setup-kind-ingress]
 
   triggers = {
     private_key_hash = sha256(file(var.ssl_private_key_path))
     certificate_hash = sha256(file(var.ssl_certificate_path))
-    namespace        = each.key
   }
 
   provisioner "local-exec" {
     working_dir = "./kind"
     command     = <<-EOT
-      kubectl get namespace ${each.key} || kubectl create namespace ${each.key}
-      kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path} -n ${each.key}
+      kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path}
     EOT
     interpreter = ["/bin/bash", "-c"]
   }

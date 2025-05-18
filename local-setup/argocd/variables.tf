@@ -26,3 +26,9 @@ variable "github_app_private_key_path" {
   description = "Path to the GitHub App Private Key"
   type        = string
 }
+variable "ssl_private_key_path" {
+  default = "/home/opkind/ssl_certs/neo.nsstc.uah.edu.unencrypted.key"
+}
+variable "ssl_certificate_path" {
+  default = "/home/opkind/ssl_certs/bundle-cert-intermediates-root.cer"
+}
