@@ -26,11 +26,13 @@ create-state: .env
 	check_create_remote_state ${AWS_REGION} ${LOCAL_DEPLOY_STATE_BUCKET_NAME} ${LOCAL_DEPLOY_STATE_DYNAMO_TABLE}
 
 local-deploy: .env
-ifeq ($(TF_VAR_manual_setup),true)
+ifeq ($(TF_VAR_manual_setup),false)
 	$(MAKE) create-state
-endif
 	$(MAKE) -C local-setup init
 	$(MAKE) -C local-setup deploy
+else
+	@echo "Skipping automated deploy because TF_VAR_manual_setup is either true or unset"
+endif
 
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean
