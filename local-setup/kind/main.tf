@@ -17,7 +17,7 @@ resource "null_resource" "setup-kind" {
   depends_on = [local_file.kind-template]
 
   triggers = {
-    config_hash    = sha256(file("${path.root}/kind/config.yaml.tmpl"))]
+    config_hash = sha256(file("${path.root}/kind/config.yaml.tmpl"))
   }
 
   provisioner "local-exec" {

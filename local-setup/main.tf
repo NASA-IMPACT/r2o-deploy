@@ -2,8 +2,8 @@ module "manual-setup" {
   count              = var.manual_setup ? 1 : 0
   source             = "./manual-setup"
   cluster_name       = var.cluster_name
-  http_ingress_port  = "4449"
-  https_ingress_port = "8883"
+  http_ingress_port  = var.http_ingress_port
+  https_ingress_port = var.https_ingress_port
 }
 
 module "kind" {
