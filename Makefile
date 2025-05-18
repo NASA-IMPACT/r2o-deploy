@@ -34,6 +34,10 @@ else
 	@echo "Skipping automated deploy because TF_VAR_manual_setup is either true or unset"
 endif
 
+manual-setup: .env
+	$(MAKE) -C local-setup init
+	$(MAKE) -C local-setup deploy
+
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean
 
