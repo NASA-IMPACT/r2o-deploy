@@ -8,7 +8,7 @@ server:
   - --insecure
   - --rootpath=/argocd
   - --basehref=/argocd
-% { if argocd_applications }
+%{ if argocd_applications != [] }
 configs:
   repositories:
     %{ for idx, app in argocd_applications }
