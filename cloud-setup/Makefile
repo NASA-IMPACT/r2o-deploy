@@ -53,31 +53,6 @@ vpc-plan:
 vpc-apply:
 	cd vpc && $(MAKE) apply
 
-# API Gateway operations
-api-gateway-init:
-	cd api-gateway && $(MAKE) init
-
-api-gateway-plan:
-	cd api-gateway && $(MAKE) plan
-
-api-gateway-apply:
-	cd api-gateway && $(MAKE) apply
-
-api-gateway-destroy:
-	cd api-gateway && $(MAKE) destroy
-
-# CloudFront operations
-cloudfront-init:
-	cd cloudfront && $(MAKE) init
-
-cloudfront-plan:
-	cd cloudfront && $(MAKE) plan
-
-cloudfront-apply:
-	cd cloudfront && $(MAKE) apply
-
-cloudfront-destroy:
-	cd cloudfront && $(MAKE) destroy
 
 
 # List available commands

@@ -57,3 +57,7 @@ variable "target_server" {
   type        = string
   default     = "https://kind.neo.nsstc.uah.edu:4449"
 }
+
+variable "prefix" {
+  type = string
+}

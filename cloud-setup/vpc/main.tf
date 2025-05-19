@@ -3,7 +3,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Environment = var.environment
+      Environment = var.prefix
       Project     = "proxy-lambda-vpc"
       ManagedBy   = "opentofu"  # Changed from terraform
     }
@@ -19,9 +19,6 @@ terraform {
     }
   }
   required_version = ">= 1.0"
-  
-  # Backend configuration will be injected through the backend.conf file
-  backend "s3" {}
 }
 
 # VPC Resource
@@ -31,7 +28,7 @@ resource "aws_vpc" "main" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "${var.environment}-vpc"
+    Name = "${var.prefix}-vpc"
   }
 }
 
@@ -40,58 +37,58 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${var.environment}-igw"
+    Name = "${var.prefix}-igw"
   }
 }
 
 # Public Subnets
 resource "aws_subnet" "public" {
   count = length(var.availability_zones)
-  
+
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index)
   availability_zone = var.availability_zones[count.index]
-  
+
   # Enable auto-assign public IP
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.environment}-public-subnet-${count.index + 1}"
+    Name = "${var.prefix}-public-subnet-${count.index + 1}"
   }
 }
 
 # Private Subnets
 resource "aws_subnet" "private" {
   count = length(var.availability_zones)
-  
+
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + length(var.availability_zones))
   availability_zone = var.availability_zones[count.index]
 
   tags = {
-    Name = "${var.environment}-private-subnet-${count.index + 1}"
+    Name = "${var.prefix}-private-subnet-${count.index + 1}"
   }
 }
 
 # NAT Gateway for Private Subnets
 resource "aws_eip" "nat" {
   domain = "vpc"
-  
+
   depends_on = [aws_internet_gateway.igw]
 
   tags = {
-    Name = "${var.environment}-nat-eip"
+    Name = "${var.prefix}-nat-eip"
   }
 }
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id
-  
+
   depends_on = [aws_internet_gateway.igw]
 
   tags = {
-    Name = "${var.environment}-nat-gateway"
+    Name = "${var.prefix}-nat-gateway"
   }
 }
 
@@ -105,7 +102,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${var.environment}-public-route-table"
+    Name = "${var.prefix}-public-route-table"
   }
 }
 
@@ -119,7 +116,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${var.environment}-private-route-table"
+    Name = "${var.prefix}-private-route-table"
   }
 }
 
@@ -139,7 +136,7 @@ resource "aws_route_table_association" "private" {
 
 # Security Group for VPC Endpoints
 resource "aws_security_group" "vpc_endpoints" {
-  name        = "${var.environment}-vpc-endpoints-sg"
+  name        = "${var.prefix}-vpc-endpoints-sg"
   description = "Security group for VPC endpoints"
   vpc_id      = aws_vpc.main.id
 
@@ -158,7 +155,7 @@ resource "aws_security_group" "vpc_endpoints" {
   }
 
   tags = {
-    Name = "${var.environment}-vpc-endpoints-sg"
+    Name = "${var.prefix}-vpc-endpoints-sg"
   }
 }
 
@@ -170,7 +167,7 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids   = [aws_route_table.private.id]
 
   tags = {
-    Name = "${var.environment}-s3-endpoint"
+    Name = "${var.prefix}-s3-endpoint"
   }
 }
 
@@ -183,7 +180,7 @@ resource "aws_vpc_endpoint" "lambda" {
   private_dns_enabled = true
 
   tags = {
-    Name = "${var.environment}-lambda-endpoint"
+    Name = "${var.prefix}-lambda-endpoint"
   }
 }
 
@@ -196,6 +193,6 @@ resource "aws_vpc_endpoint" "cloudwatch" {
   private_dns_enabled = true
 
   tags = {
-    Name = "${var.environment}-cloudwatch-endpoint"
+    Name = "${var.prefix}-cloudwatch-endpoint"
   }
 }

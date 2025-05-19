@@ -2,27 +2,24 @@
 # Define shell for consistent behavior
 SHELL := /bin/bash
 
-# Variables
-BACKEND_CONF ?= backend.conf
-TFVARS_FILE ?= terraform.tfvars
+
 
 # Main targets
 .PHONY: init plan apply destroy clean validate output
 
 init:
-	tofu init -backend-config=$(BACKEND_CONF)
+	tofu init
 
 plan:
-	tofu plan -var-file=$(TFVARS_FILE) -out=vpc.plan
+	tofu plan -out=vpc.plan
 
-apply:
-	tofu apply vpc.plan
 
-apply-auto:
-	tofu apply -var-file=$(TFVARS_FILE) -auto-approve
+
+deploy:
+	tofu apply --auto-approve
 
 destroy:
-	tofu destroy -var-file=$(TFVARS_FILE)
+	tofu destroy
 
 clean:
 	rm -rf .terraform

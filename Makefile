@@ -21,15 +21,25 @@ local-setup-list: .env
 
 create-state: .env
 	@source ./scripts/deploy.sh && \
-	cd local-setup && \
+	cd $(DIR) && \
 	generate_terraform_variables && \
 	check_create_remote_state ${AWS_REGION} ${LOCAL_DEPLOY_STATE_BUCKET_NAME} ${LOCAL_DEPLOY_STATE_DYNAMO_TABLE}
 
-local-deploy: .env create-state
+
+local-deploy: .env
+	@$(MAKE) create-state DIR=local-setup
 	$(MAKE) -C local-setup init
 	$(MAKE) -C local-setup deploy
 
+cloud-deploy: .env
+	@$(MAKE) create-state DIR=cloud-setup
+	$(MAKE) -C cloud-setup init
+	$(MAKE) -C cloud-setup deploy
 
+vpc-deploy: .env
+	@$(MAKE) create-state DIR=cloud-setup/vpc
+	$(MAKE) -C cloud-setup/vpc init
+	$(MAKE) -C cloud-setup/vpc deploy
 
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean
