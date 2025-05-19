@@ -79,6 +79,9 @@ resource "null_resource" "setup-certificate-secrets" {
 }
 resource "null_resource" "argocd-ingess" {
   depends_on = [null_resource.setup-certificate-secrets, helm_release.argocd]
+  triggers   = {
+    argocd_ingress = sha256(file("${path.root}/argocd/argocd-conf/argocd-ingress.yaml"))
+  }
   provisioner "local-exec" {
     working_dir = "./argocd"
     command     = "sleep 30 && kubectl apply -f ./argocd-conf/argocd-ingress.yaml"
