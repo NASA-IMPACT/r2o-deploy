@@ -25,10 +25,9 @@ list:
 
 clean: init
 	tofu destroy --auto-approve
-	#kind delete cluster --name ${TF_VAR_cluster_name}
+	kind delete cluster --name ${TF_VAR_cluster_name}
 	@rm -rf .terraform
-	@rm -rf .terraform.lock.hcl
-	@rm terraform.tfstate*
+
 
 test-env:
 	echo ${PROJECT}

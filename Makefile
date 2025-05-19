@@ -26,9 +26,8 @@ create-state: .env
 	check_create_remote_state ${AWS_REGION} ${LOCAL_DEPLOY_STATE_BUCKET_NAME} ${LOCAL_DEPLOY_STATE_DYNAMO_TABLE}
 
 local-deploy: .env create-state
-	pwd
-#	$(MAKE) -C local-setup init
-#	$(MAKE) -C local-setup deploy
+	$(MAKE) -C local-setup init
+	$(MAKE) -C local-setup deploy
 
 
 
