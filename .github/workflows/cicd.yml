@@ -1,0 +1,66 @@
+# Add `runs-on: self-hosted` to your workflow's YAML to send jobs to this runner.
+name: R2O CI/CD Pipeline
+# Define defaults that apply to all steps
+defaults:
+  run:
+    shell: bash -l {0}
+
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+
+on:
+  push:
+
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run test pull
+        run: |
+          echo "Running tests..."
+          ls -lah
+
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          source ${{ vars.PYTHON_VENV_PATH }}
+          python --version
+          uv add awscli
+          aws --version
+
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::244822573120:role/r2o-oidc
+          aws-region: us-west-2
+
+      - name: Get secret from AWS Secrets Manager and create .env file
+        env:
+          SECRET_NAME: r20-deployment-dev
+          $AWS_REGION: us-west-2
+        run: |
+          source ${{ vars.PYTHON_VENV_PATH }}
+          SECRET_STRING=$(aws secretsmanager get-secret-value \
+            --secret-id "$SECRET_NAME" \
+            --region "$AWS_REGION" \
+            --query SecretString \
+            --output text)
+          echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
+
+      - name: Deploy to neo server
+        run: |
+          make local-deploy
+        
