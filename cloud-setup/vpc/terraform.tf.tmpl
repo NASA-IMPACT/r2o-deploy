@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     region         = "${AWS_REGION:-us-west-2}"
     bucket         = "${LOCAL_DEPLOY_STATE_BUCKET_NAME}"
-    key            = "${LOCAL_DEPLOY_STATE_BUCKET_KEY:-$PREFIX/cloud-deployment/vpc/terraform.tfstate}"
+    key            = "${PREFIX}/cloud-deployment/vpc/terraform.tfstate}"
     dynamodb_table = "${LOCAL_DEPLOY_STATE_DYNAMO_TABLE}"
   }
 }

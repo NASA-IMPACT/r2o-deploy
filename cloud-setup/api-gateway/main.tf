@@ -80,7 +80,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_api_gateway_stage" "dev" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.proxy_api.id
-  stage_name    = var.environment
+  stage_name    = "api"
 }
 
 # Method Settings to control throttling (add this)

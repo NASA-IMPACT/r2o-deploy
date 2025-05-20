@@ -1,15 +1,3 @@
-provider "aws" {
-  region = var.aws_region
-
-  default_tags {
-    tags = {
-      Environment = var.environment
-      Project     = "cloudfront-distribution"
-      ManagedBy   = "opentofu"
-    }
-  }
-}
-
 # Use AWS-managed policies
 data "aws_cloudfront_cache_policy" "caching_disabled" {
   name = "Managed-CachingDisabled"
@@ -23,7 +11,7 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
 resource "aws_cloudfront_distribution" "api_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "${var.environment}-api-distribution"
+  comment             = "${var.prefix}-api-distribution"
   default_root_object = ""
   price_class         = "PriceClass_100"
 
@@ -46,7 +34,7 @@ resource "aws_cloudfront_distribution" "api_distribution" {
 
     cache_policy_id          = data.aws_cloudfront_cache_policy.caching_disabled.id
     origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
-    
+
     viewer_protocol_policy = "redirect-to-https"
     compress               = true  # Enable compression
   }
@@ -62,6 +50,6 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   }
 
   tags = {
-    Name = "${var.environment}-api-distribution"
+    Name = "${var.prefix}-api-distribution"
   }
 }

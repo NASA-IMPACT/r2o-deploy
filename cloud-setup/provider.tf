@@ -3,9 +3,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Environment = var.environment
-      Project     = "proxy-lambda"
-      ManagedBy   = "opentofu"
+      Project   = "R2O-${var.prefix}"
+      ManagedBy = "opentofu"
     }
   }
 }
@@ -18,7 +17,7 @@ terraform {
     }
   }
   required_version = ">= 1.0"
-  
+
   # Remove this block:
   # backend "s3" {}
 }
