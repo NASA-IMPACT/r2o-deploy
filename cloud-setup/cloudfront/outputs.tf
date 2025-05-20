@@ -7,3 +7,8 @@ output "cloudfront_domain_name" {
   description = "Domain name of the CloudFront distribution"
   value       = aws_cloudfront_distribution.api_distribution.domain_name
 }
+
+output "waf_web_acl_id" {
+  description = "ID of the WAF Web ACL"
+  value       = aws_wafv2_web_acl.cloudfront_waf.id
+}
