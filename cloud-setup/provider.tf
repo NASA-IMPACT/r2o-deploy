@@ -17,7 +17,5 @@ terraform {
     }
   }
   required_version = ">= 1.0"
-
-  # Remove this block:
-  # backend "s3" {}
+  
 }

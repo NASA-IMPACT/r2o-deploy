@@ -41,6 +41,7 @@ vpc-deploy: .env
 	$(MAKE) -C cloud-setup/vpc init
 	$(MAKE) -C cloud-setup/vpc deploy
 
+
 local-cleanup: .env create-state
 	$(MAKE) -C local-setup clean
 
