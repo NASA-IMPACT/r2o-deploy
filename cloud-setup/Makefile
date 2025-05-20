@@ -1,27 +1,21 @@
 # Define shell for consistent behavior
 SHELL := /bin/bash
 
-# Variables
-BACKEND_CONF = backend.conf
 
 # Main targets
 .PHONY: init plan apply destroy clean validate output app-only vpc-only list
 
 # Initialize infrastructure
 init:
-	tofu init -backend-config=$(BACKEND_CONF)
+	tofu init
 
 # Plan changes
 plan:
 	tofu plan -out=cloud-setup.plan
 
-# Apply changes
-apply:
-	tofu apply cloud-setup.plan
 
-# Apply without plan file
-apply-auto:
-	tofu apply -auto-approve
+deploy:
+	tofu apply --auto-approve
 
 # Destroy application resources (won't affect VPC)
 destroy:
@@ -43,41 +37,6 @@ validate:
 output:
 	tofu output
 
-# VPC-only operations (for reference, these run in the vpc subdirectory)
-vpc-init:
-	cd vpc && $(MAKE) init
-
-vpc-plan:
-	cd vpc && $(MAKE) plan
-
-vpc-apply:
-	cd vpc && $(MAKE) apply
-
-# API Gateway operations
-api-gateway-init:
-	cd api-gateway && $(MAKE) init
-
-api-gateway-plan:
-	cd api-gateway && $(MAKE) plan
-
-api-gateway-apply:
-	cd api-gateway && $(MAKE) apply
-
-api-gateway-destroy:
-	cd api-gateway && $(MAKE) destroy
-
-# CloudFront operations
-cloudfront-init:
-	cd cloudfront && $(MAKE) init
-
-cloudfront-plan:
-	cd cloudfront && $(MAKE) plan
-
-cloudfront-apply:
-	cd cloudfront && $(MAKE) apply
-
-cloudfront-destroy:
-	cd cloudfront && $(MAKE) destroy
 
 
 # List available commands

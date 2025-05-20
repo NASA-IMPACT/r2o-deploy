@@ -1,8 +1,8 @@
 # Create the API Gateway REST API
 resource "aws_api_gateway_rest_api" "proxy_api" {
-  name        = var.api_name
+  name        = "${var.prefix}-${var.api_name}"
   description = "API Gateway for proxy Lambda function"
-  
+
   endpoint_configuration {
     types = ["REGIONAL"]
   }
@@ -59,7 +59,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
   ]
 
   rest_api_id = aws_api_gateway_rest_api.proxy_api.id
-  
+
   # Force a new deployment when configurations change
   triggers = {
     redeployment = sha1(jsonencode([
@@ -80,7 +80,7 @@ resource "aws_api_gateway_deployment" "api_deployment" {
 resource "aws_api_gateway_stage" "dev" {
   deployment_id = aws_api_gateway_deployment.api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.proxy_api.id
-  stage_name    = var.environment
+  stage_name    = "api"
 }
 
 # Method Settings to control throttling (add this)
@@ -101,7 +101,7 @@ resource "aws_lambda_permission" "api_gateway_permission" {
   action        = "lambda:InvokeFunction"
   function_name = var.lambda_function_name
   principal     = "apigateway.amazonaws.com"
-  
+
   # Allow invocation from any stage/path
   source_arn = "${aws_api_gateway_rest_api.proxy_api.execution_arn}/*/*"
 }

@@ -4,11 +4,6 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
-variable "environment" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-  default     = "dev"
-}
 
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
@@ -56,4 +51,24 @@ variable "target_server" {
   description = "Target server to proxy to"
   type        = string
   default     = "https://kind.neo.nsstc.uah.edu:4449"
+}
+
+variable "prefix" {
+  type = string
+}
+
+variable "permissions_boundary" {
+  default = "arn:aws:iam::244822573120:policy/permission_boundaries"
+}
+
+variable "vpc_id" {
+  default = "vpc-096befd8a22b647c3"
+}
+
+variable "private_subnets_tagname" {
+  default = "*private-subnet-*"
+}
+
+variable "api_name" {
+  default = "proxy-api"
 }
