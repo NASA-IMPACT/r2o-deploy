@@ -58,4 +58,9 @@ module "cloudfront" {
     replace(module.api_gateway.invoke_url, "/^https?:\\/\\//", ""),
     "/\\/.*$/", ""
   )
+
+  # Add this line to pass the us-east-1 provider
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
 }

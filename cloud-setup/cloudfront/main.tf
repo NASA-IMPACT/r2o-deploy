@@ -7,8 +7,9 @@ data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
   name = "Managed-AllViewerExceptHostHeader"
 }
 
-# Create WAF Web ACL
+# Create WAF Web ACL - using the us-east-1 provider
 resource "aws_wafv2_web_acl" "cloudfront_waf" {
+  provider    = aws.us_east_1
   name        = "${var.prefix}-cloudfront-waf"
   description = "WAF for CloudFront distribution"
   scope       = "CLOUDFRONT"
@@ -72,7 +73,7 @@ resource "aws_wafv2_web_acl" "cloudfront_waf" {
   }
 }
 
-# CloudFront distribution
+# CloudFront distribution - use the regular provider
 resource "aws_cloudfront_distribution" "api_distribution" {
   enabled             = true
   is_ipv6_enabled     = true
