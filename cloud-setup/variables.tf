@@ -72,3 +72,34 @@ variable "private_subnets_tagname" {
 variable "api_name" {
   default = "proxy-api"
 }
+
+# SQS Configuration Variables
+variable "sqs_queue_name" {
+  description = "Name of the SQS queue"
+  type        = string
+  default     = "message-queue"
+}
+
+variable "sqs_queue_purpose" {
+  description = "Description of what the SQS queue is used for"
+  type        = string
+  default     = "Message queue for processing tasks"
+}
+
+variable "sqs_message_retention_seconds" {
+  description = "How long messages are retained in the queue (seconds)"
+  type        = number
+  default     = 1209600 # 14 days
+}
+
+variable "sqs_enable_dlq" {
+  description = "Enable Dead Letter Queue for failed messages"
+  type        = bool
+  default     = true
+}
+
+variable "sqs_enable_encryption" {
+  description = "Enable server-side encryption for the SQS queue"
+  type        = bool
+  default     = true
+}

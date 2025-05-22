@@ -64,3 +64,15 @@ module "cloudfront" {
     aws.us_east_1 = aws.us_east_1
   }
 }
+
+# SQS Module
+module "sqs" {
+  source = "./sqs"
+  
+  prefix                     = var.prefix
+  queue_name                 = var.sqs_queue_name
+  queue_purpose             = var.sqs_queue_purpose
+  message_retention_seconds = var.sqs_message_retention_seconds
+  enable_dlq                = var.sqs_enable_dlq
+  enable_encryption         = var.sqs_enable_encryption
+}
