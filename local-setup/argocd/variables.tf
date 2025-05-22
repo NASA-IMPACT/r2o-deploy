@@ -8,7 +8,6 @@ variable "argocd_applications" {
     private       = optional(bool)
   }))
   description = "List of ArgoCD applications to create"
-  default     = []
 }
 
 
@@ -27,8 +26,11 @@ variable "github_app_private_key_path" {
   type        = string
 }
 variable "ssl_private_key_path" {
-  default = "/home/opkind/ssl_certs/neo.nsstc.uah.edu.unencrypted.key"
 }
 variable "ssl_certificate_path" {
-  default = "/home/opkind/ssl_certs/bundle-cert-intermediates-root.cer"
+}
+
+variable "domain_name" {
+  type = string
+  
 }
