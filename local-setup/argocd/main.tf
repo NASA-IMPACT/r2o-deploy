@@ -21,6 +21,15 @@ resource "local_file" "argocd_values" {
   })
 }
 
+
+resource "local_file" "argocd_ingress" {
+  filename = "${path.root}/argocd/argocd-conf/argocd-ingress.yaml"
+  content  = templatefile("${path.root}/argocd/argocd-conf/argocd-ingress.yaml.tmpl", {
+    domain_name        = var.domain_name
+  })
+}
+
+
 # Create a single file containing all applications
 resource "local_file" "all_argocd_applications" {
   depends_on = [local_file.argocd_values]
@@ -78,7 +87,7 @@ resource "null_resource" "setup-certificate-secrets" {
   }
 }
 resource "null_resource" "argocd-ingess" {
-  depends_on = [null_resource.setup-certificate-secrets, helm_release.argocd]
+  depends_on = [null_resource.setup-certificate-secrets, helm_release.argocd, local_file.argocd_ingress]
   triggers   = {
     argocd_ingress = sha256(file("${path.root}/argocd/argocd-conf/argocd-ingress.yaml"))
   }
