@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argo-ingress
+  namespace: argocd
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+    - hosts:
+        - ${domain_name}
+      secretName: ingress-tls
+  rules:
+    - host: ${domain_name}
+      http:
+        paths:
+          - pathType: Prefix
+            path: /argocd
+            backend:
+              service:
+                name: argocd-helm-server
+                port:
+                  number: 443
