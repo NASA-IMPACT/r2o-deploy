@@ -1,6 +1,5 @@
-# Add `runs-on: self-hosted` to your workflow's YAML to send jobs to this runner.
 name: R2O CI/CD Pipeline
-# Define defaults that apply to all steps
+# Use bash for all steps
 defaults:
   run:
     shell: bash -l {0}
@@ -15,28 +14,36 @@ on:
 
 
 jobs:
-  build:
-    runs-on: self-hosted
-    name: Build
+
+  define-environment:
+    name: Set ✨ environment ✨ based on the branch 🌳
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Run test pull
+      - name: Set the environment
+        id: define_environment
         run: |
-          echo "Running tests..."
-          ls -lah
-
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
-          source ${{ vars.PYTHON_VENV_PATH }}
-          python --version
-          uv add awscli
-          aws --version
-
+          if [ "${{ github.ref_name }}" == "dev" ]; then
+            echo "env_name=development" >> $GITHUB_OUTPUT
+            echo "runner_name=NEO-RUNNER" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "main" ]; then
+            echo "env_name=staging" >> $GITHUB_OUTPUT
+            echo "runner_name=dgx01" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "production" ]; then
+            echo "env_name=production" >> $GITHUB_OUTPUT
+            echo "runner_name=xxxx" >> $GITHUB_OUTPUT
+          else
+            echo "No environment associated with ${GITHUB_REF##*/} branch"
+          fi
+      - name: Print the environment
+        if: ${{ steps.define_environment.outputs.env_name }}
+        run: echo "The environment is ${{ steps.define_environment.outputs.env_name }}"
+    outputs:
+      env_name: ${{ steps.define_environment.outputs.env_name }}
+      runner_name: ${{ steps.define_environment.outputs.runner_name }}
   deploy:
-    runs-on: self-hosted
-    needs: build
+    runs-on: ${{ needs.define-environment.outputs.runner_name }}
+    environment: ${{ needs.define-environment.outputs.env_name }}
+    needs: define-environment
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -44,7 +51,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::244822573120:role/r2o-oidc
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ vars.DEPLOY_ROLE_NAME }}
           aws-region: us-west-2
 
       - name: Get secret from AWS Secrets Manager and create .env file
@@ -59,8 +66,14 @@ jobs:
             --query SecretString \
             --output text)
           echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
-
-      - name: Deploy to neo server
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          source ${{ vars.PYTHON_VENV_PATH }}
+          python --version
+          uv add awscli
+          aws --version
+      - name: Deploy to server
         run: |
           make local-deploy
         
