@@ -69,4 +69,6 @@ jobs:
       - name: Deploy to server
         run: |
           make local-deploy
-        
+      - name: Deploy to server
+        run: |
+          make cloud-deploy

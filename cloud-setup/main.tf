@@ -22,6 +22,7 @@ data "aws_subnets" "private_subnets_id" {
 }
 
 
+
 module "lambda" {
   source                       = "./lambda-function"
   lambda_environment_variables = local.lambda_env_vars
@@ -32,7 +33,6 @@ module "lambda" {
   permissions_boundary         = var.permissions_boundary
   prefix                       = var.prefix
   private_subnet_ids           = data.aws_subnets.private_subnets_id.ids
-  target_server                = var.target_server
   vpc_id                       = var.vpc_id
 }
 
