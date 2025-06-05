@@ -22,11 +22,7 @@ variable "lambda_environment_variables" {
   #  default     = {}
 }
 
-variable "target_server" {
-  description = "List of restricted servers to proxy to"
-  type        = string
 
-}
 variable "prefix" {
   type = string
 }
