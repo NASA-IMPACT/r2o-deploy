@@ -56,7 +56,7 @@ jobs:
 
       - name: Get secret from AWS Secrets Manager and create .env file
         env:
-          SECRET_NAME: r20-deployment-dev
+          SECRET_NAME: ${{ vars.SECRET_NAME }}
           $AWS_REGION: us-west-2
         run: |
           source ${{ vars.PYTHON_VENV_PATH }}
