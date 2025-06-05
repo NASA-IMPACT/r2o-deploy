@@ -19,10 +19,8 @@ variable "kind_experimental_provider" {
 }
 
 variable "ssl_private_key_path" {
-  default = "/home/opkind/ssl_certs/neo.nsstc.uah.edu.unencrypted.key"
 }
 variable "ssl_certificate_path" {
-  default = "/home/opkind/ssl_certs/bundle-cert-intermediates-root.cer"
 }
 
 
