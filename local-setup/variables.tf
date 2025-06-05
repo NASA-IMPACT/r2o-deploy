@@ -36,7 +36,7 @@ variable "prefix" {
 
 variable "kind_experimental_provider" {
   type    = string
-  default = "podman"
+  default = ""
 }
 
 variable "manual_setup" {
