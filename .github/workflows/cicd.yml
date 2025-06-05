@@ -66,13 +66,6 @@ jobs:
             --query SecretString \
             --output text)
           echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
-          source ${{ vars.PYTHON_VENV_PATH }}
-          python --version
-          uv add awscli
-          aws --version
       - name: Deploy to server
         run: |
           make local-deploy
