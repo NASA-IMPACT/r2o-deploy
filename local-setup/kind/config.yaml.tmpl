@@ -1,27 +1,28 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-name: neo-cluster
+name: ${cluster_name}
 nodes:
-  - role: control-plane
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: ${http_ingress_port}
-        protocol: TCP
-      - containerPort: 443
-        hostPort: ${https_ingress_port}
-        protocol: TCP
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-            authorization-mode: "AlwaysAllow"
-      - |
-        kind: ClusterConfiguration
-        apiServer:
-          extraArgs:
-            enable-admission-plugins: NodeRestriction
-networking:
-  disableDefaultCNI: false
-  podSubnet: "10.244.0.0/16"
+- role: control-plane
+  # This patch is required on hosts with cgroup v2
+
+  extraPortMappings:
+    - containerPort: 80
+      hostPort: ${http_ingress_port}
+      protocol: TCP
+    - containerPort: 443
+      hostPort: ${https_ingress_port}
+      protocol: TCP
+  kubeadmConfigPatches:
+  - |
+    kind: KubeletConfiguration
+    cgroupDriver: systemd
+- role: worker
+  # This patch is required on hosts with cgroup v2
+  kubeadmConfigPatches:
+  - |
+    kind: KubeletConfiguration
+    cgroupDriver: systemd
+  extraMounts:
+    - hostPath: /dev/null
+      containerPath: /var/run/nvidia-container-devices/all
+
