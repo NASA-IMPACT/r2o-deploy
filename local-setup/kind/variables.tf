@@ -21,11 +21,11 @@ variable "ssl_certificate_path" {
 
 variable "cluster_executable" {
   type = string
-  description = "The type of cluster executable to use. Allowed values: 'kind', 'podman kind', 'nvkind'."
+  description = "The type of cluster executable to use. Allowed values: 'kind create cluster --config', 'KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster', 'nvkind cluster create --config-template'."
 
   validation {
-    condition = contains(["kind", "KIND_EXPERIMENTAL_PROVIDER=podman kind", "nvkind"], var.cluster_executable)
-    error_message = "cluster_executable must be one of: 'kind', 'KIND_EXPERIMENTAL_PROVIDER=podman kind', or 'nvkind'."
+    condition = contains(["kind create cluster --config", "KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster", "nvkind cluster create --config-template"], var.cluster_executable)
+    error_message = "The type of cluster executable to use. Allowed values: 'kind create cluster --config', 'KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster', 'nvkind cluster create --config-template'."
   }
 
 }

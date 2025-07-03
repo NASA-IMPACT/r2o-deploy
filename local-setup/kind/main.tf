@@ -24,7 +24,7 @@ resource "null_resource" "setup-kind" {
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = "${var.cluster_executable} create cluster --config=config.yaml"
+    command     = "${var.cluster_executable}=config.yaml"
   }
     
   
