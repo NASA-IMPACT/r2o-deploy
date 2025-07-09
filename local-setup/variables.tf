@@ -34,10 +34,6 @@ variable "prefix" {
   type = string
 }
 
-variable "kind_experimental_provider" {
-  type    = string
-  default = ""
-}
 
 variable "manual_setup" {
   type    = bool
@@ -45,14 +41,27 @@ variable "manual_setup" {
 }
 
 variable "ssl_private_key_path" {
-  default = "/home/opkind/ssl_certs/neo.nsstc.uah.edu.unencrypted.key"
+  default = "/home/ubuntu/r2o-deploy/local-setup/key.pem"
 }
 variable "ssl_certificate_path" {
-  default = "/home/opkind/ssl_certs/bundle-cert-intermediates-root.cer"
+  default = "/home/ubuntu/r2o-deploy/local-setup/cert.pem"
 }
 
 variable "domain_name" {
   type = string
   default = "kind.neo.nsstc.uah.edu"
   
+}
+
+variable "cluster_executable" {
+  type = string
+  description = "The type of cluster executable to use. Allowed values: 'kind create cluster --config', 'KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster', 'nvkind cluster create --config-template'."
+
+  validation {
+    condition = contains(["kind create cluster --config", "KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster", "nvkind cluster create --config-template"], var.cluster_executable)
+    error_message = "The type of cluster executable to use. Allowed values: 'kind create cluster --config', 'KIND_EXPERIMENTAL_PROVIDER=podman kind create cluster', 'nvkind cluster create --config-template'."
+  }
+
+  default = "nvkind cluster create --config-template"
+
 }
