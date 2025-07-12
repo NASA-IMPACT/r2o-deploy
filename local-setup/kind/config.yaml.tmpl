@@ -25,4 +25,6 @@ nodes:
   extraMounts:
     - hostPath: /dev/null
       containerPath: /var/run/nvidia-container-devices/all
+    - hostPath: ${dot_aws_dir_path}
+      containerPath: /root/.aws
 

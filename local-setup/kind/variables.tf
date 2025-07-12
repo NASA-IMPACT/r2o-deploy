@@ -29,3 +29,9 @@ variable "cluster_executable" {
   }
 
 }
+
+variable "dot_aws_dir_path" {
+  type        = string
+  description = "The path to the .aws directory."
+  
+}

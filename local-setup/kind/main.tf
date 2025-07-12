@@ -5,6 +5,7 @@ resource "local_file" "kind-template" {
       http_ingress_port  = var.http_ingress_port
       https_ingress_port = var.https_ingress_port
       cluster_name  = var.cluster_name
+      dot_aws_dir_path = var.dot_aws_dir_path
       config_tmpl_hash   = sha256(file("${path.root}/kind/config.yaml.tmpl"))
     }
 
