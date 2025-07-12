@@ -11,6 +11,7 @@ tofu-install:
 	rm -f install-opentofu.sh
 
 deploy:
+	tofu apply -target=null_resource.setup-kind --auto-approve
 	tofu apply --auto-approve
 
 init:

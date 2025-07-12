@@ -17,7 +17,7 @@ jobs:
 
   define-environment:
     name: Set ✨ environment ✨ based on the branch 🌳
-    runs-on: NEO-RUNNER
+    runs-on: ubuntu-latest
     steps:
       - name: Set the environment
         id: define_environment
