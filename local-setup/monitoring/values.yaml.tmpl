@@ -1,16 +1,16 @@
 grafana:
+  adminUser: ${grafana_admin}
+  adminPassword: ${grafana_password}
   ingress:
     enabled: true
     path: /monitoring
     pathType: Prefix
     hosts:
-      - kind.neo.nsstc.uah.edu
+      - ${domain_name}
     tls:
       - secretName: ingress-tls
         hosts:
-          - kind.neo.nsstc.uah.edu
-  adminUser: admin
-  adminPassword: r2oadmins
+          - ${domain_name}
   grafana.ini:
     server:
       root_url: "%(protocol)s://%(domain)s:%(http_port)s/monitoring"

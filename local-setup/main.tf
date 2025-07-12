@@ -25,5 +25,8 @@ module "monitoring" {
   source = "./monitoring"
   ssl_private_key_path = var.ssl_private_key_path
   ssl_certificate_path = var.ssl_certificate_path
+  domain_name = var.domain_name
+  grafana_admin = var.grafana_admin
+  grafana_password = var.grafana_password
 }
 

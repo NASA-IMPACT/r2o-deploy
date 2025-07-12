@@ -65,3 +65,11 @@ variable "cluster_executable" {
   default = "nvkind cluster create --config-template"
 
 }
+
+variable "grafana_admin" {
+  default = "admin"
+}
+
+variable "grafana_password" {
+  default = "r2oadmins"
+}
