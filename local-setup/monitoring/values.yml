@@ -1,0 +1,11 @@
+grafana:
+  ingress:
+    enabled: true
+    path: /monitoring
+    pathType: Prefix
+    hosts:
+      - kind.neo.nsstc.uah.edu
+    tls:
+      - secretName: ingress-tls
+        hosts:
+          - kind.neo.nsstc.uah.edu

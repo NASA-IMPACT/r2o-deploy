@@ -21,5 +21,9 @@ module "argocd" {
   ssl_certificate_path = var.ssl_certificate_path
 }
 
-
+module "monitoring" {
+  source = "./monitoring"
+  ssl_private_key_path = var.ssl_private_key_path
+  ssl_certificate_path = var.ssl_certificate_path
+}
 
