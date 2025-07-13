@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo running JWT hash $GENERATE_JWT_HASH
 # Extract the service account public key
 docker exec -it ${CLUSTER_NAME}-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub
 

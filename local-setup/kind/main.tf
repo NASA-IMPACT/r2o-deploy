@@ -41,6 +41,7 @@ resource "null_resource" "setup-jwt" {
       ISSUER_URL = var.oidc_issuer_url
       CLUSTER_NAME = var.cluster_name
       S3_BUCKET = var.oidc_s3_bucketname
+      GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
     }
     command     = "bash generate_jwt.sh"
   }
