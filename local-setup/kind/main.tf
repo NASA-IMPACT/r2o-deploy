@@ -42,7 +42,7 @@ resource "null_resource" "setup-jwt" {
       CLUSTER_NAME = var.cluster_name
       S3_BUCKET = var.oidc_s3_bucketname
     }
-    command     = "kind delete cluster --name ${var.cluster_name}; ${var.cluster_executable}=config.yaml"
+    command     = "bash generate_jwt.sh"
   }
     
   
