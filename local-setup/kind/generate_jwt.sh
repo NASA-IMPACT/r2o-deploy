@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Extract the service account public key
-docker exec -it ${CLUSTER_NAME}-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub
+docker exec ${CLUSTER_NAME}-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub
 
 # Generate JWKS from the public key
 cat > generate_jwks.py << 'EOF'
