@@ -43,7 +43,7 @@ resource "null_resource" "setup-jwt" {
       S3_BUCKET = var.oidc_s3_bucketname
       GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
     }
-    command     = "bash generate_jwt.sh"
+    command     = "echo running RENERATE_JWT hash ${GENERATE_JWT_HASH}; bash generate_jwt.sh"
   }
     
   
