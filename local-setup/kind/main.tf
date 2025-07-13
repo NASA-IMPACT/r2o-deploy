@@ -31,7 +31,7 @@ resource "null_resource" "setup-kind" {
   
 }
 
-resource "null_resource" "setup-jwt" {
+resource "null_resource" "setup-jwt-keys" {
   depends_on = [null_resource.setup-kind]
 
 
