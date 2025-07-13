@@ -31,6 +31,23 @@ resource "null_resource" "setup-kind" {
   
 }
 
+resource "null_resource" "setup-jwt" {
+  depends_on = [null_resource.setup-kind]
+
+
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    environment = {
+      ISSUER_URL = var.oidc_issuer_url
+      CLUSTER_NAME = var.cluster_name
+      S3_BUCKET = var.oidc_s3_bucketname
+    }
+    command     = "kind delete cluster --name ${var.cluster_name}; ${var.cluster_executable}=config.yaml"
+  }
+    
+  
+}
+
 
 resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]

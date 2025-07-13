@@ -23,6 +23,7 @@ module "argocd" {
 
 module "monitoring" {
   source = "./monitoring"
+  depends_on                  = [module.kind]
   ssl_private_key_path = var.ssl_private_key_path
   ssl_certificate_path = var.ssl_certificate_path
   domain_name = var.domain_name

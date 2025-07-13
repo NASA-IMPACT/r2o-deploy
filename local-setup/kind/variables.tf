@@ -34,3 +34,7 @@ variable "cluster_executable" {
 variable "oidc_issuer_url" {
   default = "https://d2oix8zjvfh7fy.cloudfront.net"
 }
+
+variable "oidc_s3_bucketname" {
+  default = "r2o-neo-kind-oidc"
+}
