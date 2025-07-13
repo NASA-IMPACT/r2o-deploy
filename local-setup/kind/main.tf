@@ -59,6 +59,20 @@ resource "null_resource" "setup-service-account" {
   }
 }
 
+resource "kubernetes_config_map_v1" "oidc_config" {
+  depends_on = [null_resource.setup-kind, null_resource.setup-jwt]
+  metadata {
+    name      = "oidc-envs"
+    namespace = "default"
+  }
+
+  # Define your key-value pairs directly here
+  data = {
+  AWS_ROLE_ARN="arn:aws:iam::244822573120:role/NeoKindPodRole"
+  AWS_WEB_IDENTITY_TOKEN_FILE="/var/run/secrets/kubernetes.io/serviceaccount/token"
+  AWS_REGION="us-west-2"
+  }
+}
 
 resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
