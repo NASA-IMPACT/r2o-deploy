@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Set your CloudFront domain
-ISSUER_URL="${oidc_issuer_url}"
-CLUSTER_NAME="${cluster_name}"
-S3_BUCKET="${oidc_s3_bucketname}"
-
-
 # Extract the service account public key
 docker exec -it ${CLUSTER_NAME}-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub
 
