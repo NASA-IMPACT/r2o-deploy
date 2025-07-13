@@ -30,8 +30,7 @@ variable "cluster_executable" {
 
 }
 
-variable "dot_aws_dir_path" {
-  type        = string
-  description = "The path to the .aws directory."
-  
+
+variable "oidc_issuer_url" {
+  default = "https://d2oix8zjvfh7fy.cloudfront.net"
 }

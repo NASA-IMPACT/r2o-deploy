@@ -6,7 +6,6 @@ module "kind" {
   cluster_executable         = var.cluster_executable
   ssl_private_key_path = var.ssl_private_key_path
   ssl_certificate_path = var.ssl_certificate_path
-  dot_aws_dir_path = var.dot_aws_dir_path
 }
 
 

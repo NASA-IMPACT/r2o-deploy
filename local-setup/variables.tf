@@ -74,10 +74,3 @@ variable "grafana_password" {
   default = "r2oadmins"
 }
 
-
-variable "dot_aws_dir_path" {
-  type        = string
-  description = "The path to the .aws directory."
-  default = "/home/opkind/.aws"
-  
-}
