@@ -48,6 +48,16 @@ resource "null_resource" "setup-jwt" {
     
   
 }
+resource "null_resource" "setup-service-account" {
+  depends_on = [null_resource.setup-kind, null_resource.setup-jwt]
+  triggers   = {
+    ingress_config_hash = sha256(file("${path.root}/kind/serviceaccount.yaml"))
+  }
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    command     = "kubectl apply -f serviceaccount.yaml"
+  }
+}
 
 
 resource "null_resource" "setup-kind-ingress" {
