@@ -38,3 +38,7 @@ variable "oidc_issuer_url" {
 variable "oidc_s3_bucketname" {
   default = "r2o-neo-kind-oidc"
 }
+
+variable "oidc_role_arn" {
+  default = "arn:aws:iam::244822573120:role/NeoKindPodRole"
+}

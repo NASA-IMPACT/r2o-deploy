@@ -33,7 +33,9 @@ resource "null_resource" "setup-kind" {
 
 resource "null_resource" "setup-jwt" {
   depends_on = [null_resource.setup-kind]
-
+  triggers = {
+      GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
+  }
 
   provisioner "local-exec" {
     working_dir = "./kind"
@@ -41,23 +43,13 @@ resource "null_resource" "setup-jwt" {
       ISSUER_URL = var.oidc_issuer_url
       CLUSTER_NAME = var.cluster_name
       S3_BUCKET = var.oidc_s3_bucketname
-      GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
     }
-    command     = "echo running RENERATE_JWT hash $GENERATE_JWT_HASH; bash generate_jwt.sh"
+    command     = "bash generate_jwt.sh"
   }
     
   
 }
-resource "null_resource" "setup-service-account" {
-  depends_on = [null_resource.setup-kind, null_resource.setup-jwt]
-  triggers   = {
-    ingress_config_hash = sha256(file("${path.root}/kind/serviceaccount.yaml"))
-  }
-  provisioner "local-exec" {
-    working_dir = "./kind"
-    command     = "kubectl apply -f serviceaccount.yaml"
-  }
-}
+
 
 resource "kubernetes_config_map_v1" "oidc_config" {
   depends_on = [null_resource.setup-kind, null_resource.setup-jwt]
@@ -68,7 +60,7 @@ resource "kubernetes_config_map_v1" "oidc_config" {
 
   # Define your key-value pairs directly here
   data = {
-  AWS_ROLE_ARN="arn:aws:iam::244822573120:role/NeoKindPodRole"
+  AWS_ROLE_ARN=var.oidc_role_arn
   AWS_WEB_IDENTITY_TOKEN_FILE="/var/run/secrets/kubernetes.io/serviceaccount/token"
   AWS_REGION="us-west-2"
   }
