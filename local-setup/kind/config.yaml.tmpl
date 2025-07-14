@@ -16,6 +16,16 @@ nodes:
   - |
     kind: KubeletConfiguration
     cgroupDriver: systemd
+  - |
+    # Configure the API server to use your public OIDC endpoint.
+    kind: ClusterConfiguration
+    apiServer:
+      extraArgs:
+        service-account-issuer: "${oidc_issuer_url}"
+        service-account-signing-key-file: "/etc/kubernetes/pki/sa.key"
+        service-account-key-file: "/etc/kubernetes/pki/sa.pub"
+        service-account-jwks-uri: "${oidc_issuer_url}/openid/v1/jwks"
+        api-audiences: sts.amazonaws.com
 - role: worker
   # This patch is required on hosts with cgroup v2
   kubeadmConfigPatches:

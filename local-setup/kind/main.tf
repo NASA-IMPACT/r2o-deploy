@@ -6,6 +6,7 @@ resource "local_file" "kind-template" {
       https_ingress_port = var.https_ingress_port
       cluster_name  = var.cluster_name
       config_tmpl_hash   = sha256(file("${path.root}/kind/config.yaml.tmpl"))
+      oidc_issuer_url = var.oidc_issuer_url
     }
 
 
@@ -24,12 +25,45 @@ resource "null_resource" "setup-kind" {
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = "${var.cluster_executable}=config.yaml"
+    command     = "kind delete cluster --name ${var.cluster_name}; ${var.cluster_executable}=config.yaml"
   }
     
   
 }
 
+resource "null_resource" "setup-jwt" {
+  depends_on = [null_resource.setup-kind]
+  triggers = {
+      GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
+  }
+
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    environment = {
+      ISSUER_URL = var.oidc_issuer_url
+      CLUSTER_NAME = var.cluster_name
+      S3_BUCKET = var.oidc_s3_bucketname
+      CLOUDFRONT_ID = var.cloudfront_id
+    }
+    command     = "bash generate_jwt.sh"
+  }
+    
+  
+}
+
+
+resource "kubernetes_config_map_v1" "oidc_config" {
+  depends_on = [null_resource.setup-kind, null_resource.setup-jwt, helm_release.gpu_operator]
+  metadata {
+    name      = "oidc-envs"
+    namespace = "default"
+  }
+  data = {
+  AWS_ROLE_ARN=var.oidc_role_arn
+  AWS_WEB_IDENTITY_TOKEN_FILE="/var/run/secrets/kubernetes.io/serviceaccount/token"
+  AWS_REGION="us-west-2"
+  }
+}
 
 resource "null_resource" "setup-kind-ingress" {
   depends_on = [null_resource.setup-kind]
