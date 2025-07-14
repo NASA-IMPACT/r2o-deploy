@@ -6,7 +6,14 @@ module "kind" {
   cluster_executable         = var.cluster_executable
   ssl_private_key_path = var.ssl_private_key_path
   ssl_certificate_path = var.ssl_certificate_path
+  cloudfront_id      = var.cloudfront_id
+  oidc_issuer_url    = var.oidc_issuer_url
+  oidc_role_arn      = var.oidc_role_arn
+  oidc_s3_bucketname = var.oidc_s3_bucketname
 }
+
+# Add module to provision lambda
+
 
 
 module "argocd" {

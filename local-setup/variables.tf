@@ -45,6 +45,7 @@ variable "ssl_private_key_path" {
 }
 variable "ssl_certificate_path" {
   default = "/home/ubuntu/r2o-deploy/local-setup/cert.pem"
+  sensitive =  true
 }
 
 variable "domain_name" {
@@ -71,6 +72,26 @@ variable "grafana_admin" {
 }
 
 variable "grafana_password" {
-  default = "r2oadmins"
+  type = string
+  sensitive = true
 }
 
+variable "oidc_issuer_url" {
+  type = string
+  description = "The URL of the OIDC issuer."
+}
+
+variable "oidc_s3_bucketname" {
+  type = string
+  description = "The name of the S3 bucket where the OIDC credentials will be stored"
+}
+
+variable "oidc_role_arn" {
+  type = string
+  description = "The ARN of the IAM role that has permissions to access the S3 bucket."
+}
+
+variable "cloudfront_id" {
+  type = string
+  description = "The CloudFront ID for the distribution."
+}

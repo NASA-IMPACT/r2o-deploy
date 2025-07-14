@@ -85,4 +85,38 @@ aws s3 cp openid_configuration.json s3://${S3_BUCKET}/.well-known/openid-configu
 aws s3 cp jwks.json s3://${S3_BUCKET}/openid/v1/jwks
 
 echo "OIDC configuration uploaded to S3"
-echo "Make sure your CloudFront distribution serves these files"
+echo "Invalidate Cloudfront"
+aws cloudfront create-invalidation --distribution-id ${CLOUDFRONT_ID} --paths "/*"
+
+# Creating openIDC provider in AWS
+# THUMBPRINT=$(echo | openssl s_client -servername ${var.cloudfront_url} -showcerts -connect ${var.cloudfront_url}:443 2>/dev/null | openssl x509 -fingerprint -noout | sed 's/://g' | cut -d'=' -f2)
+
+# if [ -z "$THUMBPRINT" ]; then
+#     echo "Failed to get thumbprint!"
+#     exit 1
+# fi
+
+# echo "Thumbprint found: $THUMBPRINT"
+# echo "Creating IAM OIDC provider..."
+# # This command will fail if the provider already exists. We add '|| true' to prevent this from stopping the tofu run.
+# aws iam create-open-id-connect-provider --url https://${var.cloudfront_url} --thumbprint-list $THUMBPRINT --client-id-list sts.amazonaws.com || true
+# aws iam create-role --role-name MyKindPodRole --assume-role-policy-document file://trust-policy.json
+# aws iam attach-role-policy --role-name MyKindPodRole --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+# {
+#     "Version": "2012-10-17",
+#     "Statement": [
+#         {
+#             "Effect": "Allow",
+#             "Principal": {
+#                 "Federated": "arn:aws:iam::<AWS_ACCOUNT_ID>:oidc-provider/<CF_ID>.cloudfront.net"
+#             },
+#             "Action": "sts:AssumeRoleWithWebIdentity",
+#             "Condition": {
+#                 "StringEquals": {
+#                     "<CF_ID>.cloudfront.net:sub": "system:serviceaccount:default:default",
+#                     "<CF_ID>.cloudfront.net:aud": "sts.amazonaws.com"
+#                 }
+#             }
+#         }
+#     ]
+# }

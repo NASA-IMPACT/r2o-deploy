@@ -15,6 +15,7 @@ on:
       - dev
       - main
       - production
+      - feature/add-iam-anywhere
 
 jobs:
 
@@ -36,6 +37,7 @@ jobs:
             echo "runner_name=xxxx" >> $GITHUB_OUTPUT
           else
             echo "No environment associated with ${GITHUB_REF##*/} branch"
+            echo "runner_name=NEO-RUNNER" >> $GITHUB_OUTPUT
           fi
       - name: Print the environment
         if: ${{ steps.define_environment.outputs.env_name }}

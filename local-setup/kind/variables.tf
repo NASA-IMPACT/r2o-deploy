@@ -15,8 +15,10 @@ variable "https_ingress_port" {
 
 
 variable "ssl_private_key_path" {
+  sensitive = true
 }
 variable "ssl_certificate_path" {
+  sensitive = true
 }
 
 variable "cluster_executable" {
@@ -32,13 +34,21 @@ variable "cluster_executable" {
 
 
 variable "oidc_issuer_url" {
-  default = "https://d2oix8zjvfh7fy.cloudfront.net"
+  type = string
+  description = "The URL of the OIDC issuer."
 }
 
 variable "oidc_s3_bucketname" {
-  default = "r2o-neo-kind-oidc"
+  type = string
+  description = "The name of the S3 bucket where the OIDC credentials will be stored"
 }
 
 variable "oidc_role_arn" {
-  default = "arn:aws:iam::244822573120:role/NeoKindPodRole"
+  type = string
+  description = "The ARN of the IAM role that has permissions to access the S3 bucket."
+}
+
+variable "cloudfront_id" {
+  type = string
+  description = "The CloudFront ID for the distribution."
 }
