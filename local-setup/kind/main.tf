@@ -71,7 +71,7 @@ resource "local_file" "oidc-config-template" {
 resource "null_resource" "oidc_config" {
   depends_on = [null_resource.setup-kind, null_resource.setup-jwt, helm_release.gpu_operator]
   triggers   = {
-    ingress_config_hash = sha256(file("${path.root}/kind/oidc_config.yaml.tmp"))
+    ingress_config_hash = sha256(file("${path.root}/kind/oidc_config.yaml.tmpl"))
   }
   provisioner "local-exec" {
     working_dir = "./kind"
