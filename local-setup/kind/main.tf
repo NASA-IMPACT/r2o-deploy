@@ -46,6 +46,7 @@ resource "null_resource" "setup-jwt" {
       CLOUDFRONT_ID = var.cloudfront_id
     }
     command     = "bash generate_jwt.sh"
+
   }
     
   

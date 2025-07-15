@@ -89,7 +89,7 @@ resource "null_resource" "setup-certificate-secrets" {
 resource "null_resource" "argocd-ingess" {
   depends_on = [null_resource.setup-certificate-secrets, helm_release.argocd, local_file.argocd_ingress]
   triggers   = {
-    argocd_ingress = sha256(file("${path.root}/argocd/argocd-conf/argocd-ingress.yaml"))
+    argocd_ingress = sha256(file("${path.root}/argocd/argocd-conf/argocd-ingress.yaml.tmpl"))
   }
   provisioner "local-exec" {
     working_dir = "./argocd"

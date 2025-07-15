@@ -46,6 +46,7 @@ variable "ssl_private_key_path" {
 variable "ssl_certificate_path" {
   default = "/home/ubuntu/r2o-deploy/local-setup/cert.pem"
   sensitive =  true
+
 }
 
 variable "domain_name" {
@@ -66,6 +67,7 @@ variable "cluster_executable" {
   default = "nvkind cluster create --config-template"
 
 }
+
 
 variable "grafana_admin" {
   default = "admin"
