@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oidc-envs
+  namespace: default
+data:
+  aws_role_arn: ${aws_role_arn}
+  aws_web_identity_token_file: "${aws_web_identity_token_file}"
+  aws_region: "${aws_region}"
