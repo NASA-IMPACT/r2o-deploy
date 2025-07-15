@@ -53,17 +53,31 @@ resource "null_resource" "setup-jwt" {
 }
 
 
-resource "kubernetes_config_map_v1" "oidc_config" {
+
+resource "local_file" "oidc-config-template" {
+
+  content = templatefile("${path.root}/kind/oidc_config.yaml.tmpl",
+    {
+    aws_role_arn=var.oidc_role_arn
+    aws_web_identity_token_file="/var/run/secrets/kubernetes.io/serviceaccount/token"
+    aws_region="us-west-2"
+    }
+
+
+  )
+  filename = "${path.root}/kind/oidc_config.yaml"
+}
+
+resource "null_resource" "oidc_config" {
   depends_on = [null_resource.setup-kind, null_resource.setup-jwt, helm_release.gpu_operator]
-  metadata {
-    name      = "oidc-envs"
-    namespace = "default"
+  triggers   = {
+    ingress_config_hash = sha256(file("${path.root}/kind/oidc_config.yaml.tmp"))
   }
-  data = {
-  AWS_ROLE_ARN=var.oidc_role_arn
-  AWS_WEB_IDENTITY_TOKEN_FILE="/var/run/secrets/kubernetes.io/serviceaccount/token"
-  AWS_REGION="us-west-2"
+  provisioner "local-exec" {
+    working_dir = "./kind"
+    command     = "kubectl apply -f oidc_config.yaml"
   }
+
 }
 
 resource "null_resource" "setup-kind-ingress" {
