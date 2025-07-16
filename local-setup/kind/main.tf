@@ -112,8 +112,13 @@ resource "null_resource" "setup-certificate-secrets" {
 
   provisioner "local-exec" {
     working_dir = "./kind"
-    command     = <<-EOT
+        command     = <<-EOT
+    if ! kubectl get secret ingress-tls >/dev/null 2>&1; then
+      echo "Creating TLS secret ingress-tls..."
       kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path}
+    else
+      echo "TLS secret ingress-tls already exists"
+    fi
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
