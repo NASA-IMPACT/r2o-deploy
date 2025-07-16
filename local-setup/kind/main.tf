@@ -34,6 +34,7 @@ resource "null_resource" "setup-kind" {
     fi
     EOT
     interpreter = ["/bin/bash", "-c"]
+
   }
     
   
