@@ -71,7 +71,7 @@ jobs:
           echo "$SECRET_STRING" | jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > .env
       - name: Deploy to server
         run: |
-          make local-deploy
+          source ${{ vars.PYTHON_VENV_PATH }}; make local-deploy
       - name: Deploy to AWS-Cloud
         run: |
           make cloud-deploy
