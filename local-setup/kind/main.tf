@@ -25,7 +25,15 @@ resource "null_resource" "setup-kind" {
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = "kind delete cluster --name ${var.cluster_name}; ${var.cluster_executable}=config.yaml"
+    command     = <<-EOT
+    if kind get clusters 2>/dev/null | grep -q "^${var.cluster_name}$"; then
+      echo "Cluster ${var.cluster_name} exists..."
+    else
+      echo "Cluster ${var.cluster_name} does not exist. Creating..."
+      ${var.cluster_executable}=config.yaml
+    fi
+    EOT
+    interpreter = ["/bin/bash", "-c"]
   }
     
   
