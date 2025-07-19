@@ -131,6 +131,7 @@ resource "helm_release" "gpu_operator" {
   depends_on = [null_resource.setup-certificate-secrets]
   namespace  = "gpu-operator"
   create_namespace = true
+  replace    = true
 
   repository = "https://nvidia.github.io/gpu-operator"
   chart      = "gpu-operator"
