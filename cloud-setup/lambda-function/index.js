@@ -24,23 +24,10 @@ exports.handler = async (event) => {
     
     console.log('Original request path:', requestPath);
     
-    // ===== CUSTOM PATH MAPPING LOGIC =====
-    // This is the key part that handles your specific routing requirements
-    
-    // Special handling for health check
-    if (requestPath === '/v1/api/health') {
-      requestPath = '/v1/api/health';
-      console.log('Health check detected, using path:', requestPath);
-    }
-    // Special handling for root path - redirect to a specific valid path if needed
-    else if (requestPath === '/' || requestPath === '') {
-      // You might need to change this to a valid path on your server
-      // For example: '/v1' or '/api' or whatever path your server accepts
-      requestPath = '/v1/api/health'; // Modify this to a path that works on your server
-      console.log('Root path detected, redirecting to:', requestPath);
-    }
+
+
     // For API Gateway proxy paths, ensure proper forwarding
-    else if (event.pathParameters && event.pathParameters.proxy) {
+   if (event.pathParameters && event.pathParameters.proxy) {
       // For API Gateway /{proxy+} resource
       requestPath = '/' + event.pathParameters.proxy;
       console.log('Proxy path detected, using path:', requestPath);
@@ -168,7 +155,7 @@ function makeRequest(protocol, options, body) {
     req.on('error', (error) => {
       reject(error);
     });
-    
+
     if (body) {
       req.write(body);
     }

@@ -44,6 +44,7 @@ resource "null_resource" "setup-jwt" {
   depends_on = [null_resource.setup-kind]
   triggers = {
       GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
+
   }
 
   provisioner "local-exec" {

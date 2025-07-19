@@ -17,7 +17,6 @@ on:
       - production
 
 jobs:
-
   define-environment:
     name: Set ✨ environment ✨ based on the branch 🌳
     runs-on: ubuntu-latest
