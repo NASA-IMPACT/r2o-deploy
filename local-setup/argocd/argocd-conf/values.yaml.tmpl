@@ -2,7 +2,8 @@
 global:
   image:
     tag: "latest"
-
+  imagePullSecrets:
+  - name: ecr-registry-key
 server:
   extraArgs:
   - --insecure

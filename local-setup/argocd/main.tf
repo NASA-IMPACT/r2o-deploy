@@ -11,6 +11,35 @@ locals {
   ])
 }
 
+
+data "aws_ecr_authorization_token" "token" {}
+
+# Updated Kubernetes secret using the new data source attributes
+resource "kubernetes_secret_v1" "ecr_secret" {
+  metadata {
+    name      = "ecr-registry-key"
+    namespace = "argocd"
+  }
+
+  data = {
+    ".dockerconfigjson" = base64encode(jsonencode({
+      auths = {
+        (data.aws_ecr_authorization_token.token.proxy_endpoint) = {
+          # The new data source provides user_name and password separately.
+          # We must combine and base64 encode them.
+          auth = base64encode("${data.aws_ecr_authorization_token.token.user_name}:${data.aws_ecr_authorization_token.token.password}")
+        }
+      }
+    }))
+  }
+
+  type = "kubernetes.io.dockerconfigjson"
+
+  depends_on = [
+    resource.helm_release.argocd
+  ]
+}
+
 resource "local_file" "argocd_values" {
   filename = "${path.root}/argocd/argocd-conf/values.yaml"
   content  = templatefile("${path.root}/argocd/argocd-conf/values.yaml.tmpl", {
