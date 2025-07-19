@@ -25,7 +25,16 @@ resource "null_resource" "setup-kind" {
   provisioner "local-exec" {
     when        = create
     working_dir = "./kind"
-    command     = "kind delete cluster --name ${var.cluster_name}; ${var.cluster_executable}=config.yaml"
+    command     = <<-EOT
+    if kind get clusters 2>/dev/null | grep -q "^${var.cluster_name}$"; then
+      echo "Cluster ${var.cluster_name} exists..."
+    else
+      echo "Cluster ${var.cluster_name} does not exist. Creating..."
+      ${var.cluster_executable}=config.yaml
+    fi
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+
   }
     
   
@@ -35,6 +44,7 @@ resource "null_resource" "setup-jwt" {
   depends_on = [null_resource.setup-kind]
   triggers = {
       GENERATE_JWT_HASH   = sha256(file("${path.root}/kind/generate_jwt.sh"))
+
   }
 
   provisioner "local-exec" {
@@ -72,6 +82,7 @@ resource "null_resource" "oidc_config" {
   depends_on = [null_resource.setup-kind, null_resource.setup-jwt, helm_release.gpu_operator]
   triggers   = {
     ingress_config_hash = sha256(file("${path.root}/kind/oidc_config.yaml.tmpl"))
+    config_hash = sha256(local_file.oidc-config-template.content)
   }
   provisioner "local-exec" {
     working_dir = "./kind"
@@ -103,8 +114,13 @@ resource "null_resource" "setup-certificate-secrets" {
 
   provisioner "local-exec" {
     working_dir = "./kind"
-    command     = <<-EOT
+        command     = <<-EOT
+    if ! kubectl get secret ingress-tls >/dev/null 2>&1; then
+      echo "Creating TLS secret ingress-tls..."
       kubectl create secret tls ingress-tls --key ${var.ssl_private_key_path} --cert ${var.ssl_certificate_path}
+    else
+      echo "TLS secret ingress-tls already exists"
+    fi
     EOT
     interpreter = ["/bin/bash", "-c"]
   }

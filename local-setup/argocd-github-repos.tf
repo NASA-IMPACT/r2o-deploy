@@ -22,6 +22,14 @@ variable "argocd_applications" {
       target_path   = "app/nginx_app"
       target_branch = "use-ssl"
       private       = false
-    }
+    },
+    {
+      app_name      = "predictor-app"
+      repo_url      = "https://github.com/NASA-IMPACT/fm-inference-sagemaker"
+      target_path   = "k8s-manifests"
+      target_branch = "feature/add-k8s-services"
+      private       = true
+    },
+
   ]
 }

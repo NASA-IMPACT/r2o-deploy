@@ -11,6 +11,45 @@ locals {
   ])
 }
 
+
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+# Get ECR authorization token
+data "aws_ecr_authorization_token" "token" {}
+
+resource "time_rotating" "ecr_token_rotation" {
+  rotation_hours = 8  # Refresh every 8 hours (before 12-hour expiry)
+}
+
+
+# Create ECR registry secret
+resource "kubernetes_secret_v1" "ecr_secret" {
+  metadata {
+    name      = "ecr-registry-key"
+    namespace = "default"
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com" = {
+          username = "AWS"
+          password = data.aws_ecr_authorization_token.token.password
+          auth     = base64encode("AWS:${data.aws_ecr_authorization_token.token.password}")
+        }
+      }
+    })
+  }
+  lifecycle {
+    replace_triggered_by = [
+      time_rotating.ecr_token_rotation
+    ]
+  }
+}
+
 resource "local_file" "argocd_values" {
   filename = "${path.root}/argocd/argocd-conf/values.yaml"
   content  = templatefile("${path.root}/argocd/argocd-conf/values.yaml.tmpl", {
