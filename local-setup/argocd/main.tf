@@ -12,32 +12,42 @@ locals {
 }
 
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+# Get ECR authorization token
 data "aws_ecr_authorization_token" "token" {}
 
-# Updated Kubernetes secret using the new data source attributes
+resource "time_rotating" "ecr_token_rotation" {
+  rotation_hours = 8  # Refresh every 8 hours (before 12-hour expiry)
+}
+
+
+# Create ECR registry secret
 resource "kubernetes_secret_v1" "ecr_secret" {
   metadata {
     name      = "ecr-registry-key"
-    namespace = "argocd"
+    namespace = "default"
   }
+
+  type = "kubernetes.io/dockerconfigjson"
 
   data = {
-    ".dockerconfigjson" = base64encode(jsonencode({
+    ".dockerconfigjson" = jsonencode({
       auths = {
-        (data.aws_ecr_authorization_token.token.proxy_endpoint) = {
-          # The new data source provides user_name and password separately.
-          # We must combine and base64 encode them.
-          auth = base64encode("${data.aws_ecr_authorization_token.token.user_name}:${data.aws_ecr_authorization_token.token.password}")
+        "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com" = {
+          username = "AWS"
+          password = data.aws_ecr_authorization_token.token.password
+          auth     = base64encode("AWS:${data.aws_ecr_authorization_token.token.password}")
         }
       }
-    }))
+    })
   }
-
-  type = "kubernetes.io.dockerconfigjson"
-
-  depends_on = [
-    resource.helm_release.argocd
-  ]
+  lifecycle {
+    replace_triggered_by = [
+      time_rotating.ecr_token_rotation
+    ]
+  }
 }
 
 resource "local_file" "argocd_values" {
