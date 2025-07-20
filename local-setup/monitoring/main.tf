@@ -4,7 +4,7 @@ resource "helm_release" "kube-prometheus" {
   depends_on = [local_file.kube-prometheus-values]
   namespace  = "monitoring"
   create_namespace = true
-  version    = "45.7.1"
+  version    = "75.12.0"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   values = [local_file.kube-prometheus-values.content]
