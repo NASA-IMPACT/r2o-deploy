@@ -19,7 +19,7 @@ module "kind" {
 module "argocd" {
   source                      = "./argocd"
   depends_on                  = [module.kind]
-  argocd_applications         = var.argocd_applications
+  argocd_applications         = local.argocd_applications
   github_app_private_key_path = var.github_app_private_key_path
   github_app_id               = var.github_app_id
   github_app_installation_id  = var.github_app_installation_id
