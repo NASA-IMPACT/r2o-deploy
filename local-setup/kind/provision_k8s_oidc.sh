@@ -5,6 +5,7 @@
 #ROLE_NAME=role
 
 
+
 #Creating OIDC provider in AWS
 # Get the CloudFront domain from ISSUER_URL for thumbprint calculation
 CF_DOMAIN=$(echo ${ISSUER_URL} | sed 's|https://||' | sed 's|/.*||')

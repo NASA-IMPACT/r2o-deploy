@@ -127,7 +127,7 @@ resource "null_resource" "setup-certificate-secrets" {
 }
 
 resource "helm_release" "gpu_operator" {
-  name       = "${var.cluster_name}-gpu-operator"
+  name       = "${var.cluster_name}-gpus-operator"
   depends_on = [null_resource.setup-certificate-secrets]
   namespace  = "gpu-operator"
   create_namespace = true
