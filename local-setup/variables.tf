@@ -97,3 +97,13 @@ variable "cloudfront_id" {
   type = string
   description = "The CloudFront ID for the distribution."
 }
+variable "prediction_branch" {
+  type = string
+  description = "The branch in the prediction repository where the code will be deployed."
+  default = "feature/add-k8s-services"
+}
+variable "fastapi_branch" {
+  type = string
+  description = "The branch in the fastapi repository where the code will be deployed."
+  default = "use-ssl"
+}

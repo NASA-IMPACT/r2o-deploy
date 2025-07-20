@@ -13,12 +13,10 @@ exports.handler = async (event, context) => {
         
         // Extract path from the event, removing the stage prefix if present
         let path = event.path;
-        if (path.startsWith('/api')) {
-            path = path.substring(4); // Remove '/api' stage prefix
-        }
+
         
         // Construct the full target URL
-        const fullUrl = `${targetServer}/api${path}`;
+        const fullUrl = `${targetServer}${path}`;
         const parsedUrl = new URL(fullUrl);
         
         // Add query string parameters if they exist

@@ -1,11 +1,15 @@
 #!/bin/bash
 
+# envs
+# POD_NAME="your-pod-name"
+# CLOUDFRONT_ID ="your-cloudfront-id"
+# CLUSTER_NAME="your-cluster-name"
 echo "=== Syncing Kubernetes Keys to JWKS ==="
 echo ""
 
 # Get the current token and extract its kid
 echo "Getting current token from pod..."
-TOKEN=$(kubectl exec my-app-pod -- cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+TOKEN=$(kubectl exec ${POD_NAME} -- cat /var/run/secrets/kubernetes.io/serviceaccount/token)
 HEADER=$(echo "$TOKEN" | cut -d. -f1)
 
 # Add padding if needed
@@ -21,7 +25,7 @@ echo "Token is using kid: $TOKEN_KID"
 
 # Get current JWKS
 echo "Current JWKS kid:"
-JWKS_KID=$(curl -s https://d2oix8zjvfh7fy.cloudfront.net/openid/v1/jwks | python3 -c "import json,sys; data=json.load(sys.stdin); print(data['keys'][0]['kid'] if data.get('keys') else 'No keys found')" 2>/dev/null)
+JWKS_KID=$(curl -s https:/${CLOUDFRONT_ID}.cloudfront.net/openid/v1/jwks | python3 -c "import json,sys; data=json.load(sys.stdin); print(data['keys'][0]['kid'] if data.get('keys') else 'No keys found')" 2>/dev/null)
 echo "JWKS is using kid: $JWKS_KID"
 
 if [ "$TOKEN_KID" = "$JWKS_KID" ]; then
@@ -31,7 +35,7 @@ if [ "$TOKEN_KID" = "$JWKS_KID" ]; then
     
     # Check if OIDC provider exists in AWS
     echo "Checking AWS OIDC provider..."
-    aws iam list-open-id-connect-providers | grep d2oix8zjvfh7fy.cloudfront.net || echo "❌ OIDC provider not found in AWS"
+    aws iam list-open-id-connect-providers | grep ${CLOUDFRONT_ID}.cloudfront.net || echo "❌ OIDC provider not found in AWS"
     
     # Check role trust policy
     echo "Checking role trust policy..."
@@ -43,7 +47,7 @@ else
     
     # Extract current public key
     echo "Extracting current public key from cluster..."
-    docker exec neo-cluster-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub.current
+    docker exec ${CLUSTER_NAME}-control-plane cat /etc/kubernetes/pki/sa.pub > sa.pub.current
     
     # Generate new JWKS
     echo "Generating new JWKS..."

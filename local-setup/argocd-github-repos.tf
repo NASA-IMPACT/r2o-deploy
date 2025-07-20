@@ -1,3 +1,4 @@
+
 variable "argocd_applications" {
   type = list(object({
     app_name      = string
@@ -13,7 +14,7 @@ variable "argocd_applications" {
       app_name      = "fastapi-app"
       repo_url      = "https://github.com/NASA-IMPACT/r2o-fastapi-k8s"
       target_path   = "fastapi-manifest"
-      target_branch = "use-ssl"
+      target_branch = var.fastapi_branch
       private       = true
     },
     {
@@ -27,7 +28,7 @@ variable "argocd_applications" {
       app_name      = "predictor-app"
       repo_url      = "https://github.com/NASA-IMPACT/fm-inference-sagemaker"
       target_path   = "k8s-manifests"
-      target_branch = "feature/add-k8s-services"
+      target_branch = var.prediction_branch
       private       = true
     },
 
