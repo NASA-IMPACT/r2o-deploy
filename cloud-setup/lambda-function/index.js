@@ -3,19 +3,68 @@ const http = require('http');
 
 // The name of the header clients will use to send the key
 const API_KEY_HEADER = 'x-api-key';
-// The path prefix to exclude from the auth check
-const EXCLUDED_PATH_PREFIX = ['/docs', '/health', '/ping', '/openapi.json'];
+// The path prefixes/suffixes to exclude from the auth check
+const EXCLUDED_PATHS = ['/docs', '/health', '/ping', '/openapi.json'];
 
 exports.handler = async (event, context) => {
     try {
+
+
         const requestPath = event.path;
 
-        // --- START: Path Exclusion and Authorization Check ---
-        // Only run the API key check if the path does NOT start with the excluded prefixes.
-        if (!EXCLUDED_PATH_PREFIX.some(prefix => requestPath.endsWith(prefix))) {
-            const storedApiKey = process.env.API_KEY;
-            const incomingApiKey = event.headers[API_KEY_HEADER];
+        
+        // Check both lowercase and case-sensitive versions
+        const headerKeys = Object.keys(event.headers || {});
+        
+        const apiKeyFromHeaders = event.headers[API_KEY_HEADER] || 
+                                 event.headers[API_KEY_HEADER.toLowerCase()] ||
+                                 event.headers[API_KEY_HEADER.toUpperCase()];
+        
 
+
+        // Special handling for the /validate endpoint
+        if (requestPath && requestPath.endsWith('/validate')) {
+            const storedApiKey = process.env.API_KEY;
+            const incomingApiKey = apiKeyFromHeaders;
+
+            if (!storedApiKey) {
+                console.error("Configuration Error: API_KEY environment variable is not set.");
+                return {
+                    statusCode: 500,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Internal Server Error: Authorization not configured.' }),
+                };
+            }
+
+            if (!incomingApiKey || incomingApiKey !== storedApiKey) {
+                console.warn("Validation failed: Invalid or missing API Key.");
+                return {
+                    statusCode: 403,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: 'Invalid API key' }),
+                };
+            }
+
+            console.log("Validation successful");
+            return {
+                statusCode: 200,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'API key is valid' }),
+            };
+        }
+
+        // --- START: Path Exclusion and Authorization Check ---
+
+        const isExcludedPath = EXCLUDED_PATHS.some(excludedPath => {
+            const endsWithCheck = requestPath && requestPath.endsWith(excludedPath);
+            console.log(`  "${requestPath}" endsWith "${excludedPath}": ${endsWithCheck}`);
+            return endsWithCheck;
+        });
+
+
+        if (!isExcludedPath) {
+            const storedApiKey = process.env.API_KEY;
+            const incomingApiKey = apiKeyFromHeaders;
             if (!storedApiKey) {
                 console.error("Configuration Error: API_KEY environment variable is not set.");
                 return {
@@ -30,22 +79,34 @@ exports.handler = async (event, context) => {
                 return {
                     statusCode: 403,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Forbidden' }),
+                    body: JSON.stringify({ 
+                        message: 'Forbidden: Invalid API key',
+                        debug: {
+                            path: requestPath,
+                            excluded: isExcludedPath,
+                            hasApiKey: !!incomingApiKey,
+                            headerKeys: headerKeys
+                        }
+                    }),
                 };
             }
-        }
-
-
-        if (requestPath.endsWith('/validate')) {
-            return {
-                statusCode: 200,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'api-key is valid' }),
-            };
+        } else {
+            console.log('Path excluded from authentication, proceeding...');
         }
         // --- END: Path Exclusion and Authorization Check ---
 
+        // Forward the request to the target server
         const targetServer = process.env.TARGET_SERVER;
+        if (!targetServer) {
+            console.error("Configuration Error: TARGET_SERVER environment variable is not set.");
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: 'Internal Server Error: Target server not configured.' }),
+            };
+        }
+
+
         const targetUrl = new URL(targetServer);
         const isHttps = targetUrl.protocol === 'https:';
         const client = isHttps ? https : http;
@@ -59,14 +120,18 @@ exports.handler = async (event, context) => {
             });
         }
 
+        // IMPORTANT: Preserve ALL headers including the API key for the target server
         const headers = { ...event.headers };
-        // Remove hop-by-hop headers and our own auth header
+        
+        // Only remove hop-by-hop headers that shouldn't be forwarded
+        // DO NOT remove the x-api-key header since FastAPI needs it
         const headersToRemove = [
             'host', 'connection', 'upgrade', 'proxy-authenticate', 'proxy-authorization',
-            'te', 'trailer', 'transfer-encoding', API_KEY_HEADER
+            'te', 'trailer', 'transfer-encoding'
         ];
-        headersToRemove.forEach(h => delete headers[h]);
+        headersToRemove.forEach(h => delete headers[h.toLowerCase()]);
 
+        // Set the correct host header for the target server
         headers['host'] = parsedUrl.host;
 
         const options = {
@@ -77,6 +142,7 @@ exports.handler = async (event, context) => {
             headers: headers,
             rejectUnauthorized: false
         };
+
 
         const response = await new Promise((resolve, reject) => {
             const req = client.request(options, (res) => {
@@ -90,7 +156,10 @@ exports.handler = async (event, context) => {
                     delete responseHeaders['transfer-encoding'];
 
                     const contentType = res.headers['content-type'] || '';
-                    const isBinary = !contentType.startsWith('text/') && !contentType.includes('application/json');
+                    const isBinary = !contentType.startsWith('text/') && 
+                                   !contentType.includes('application/json') && 
+                                   !contentType.includes('application/javascript') &&
+                                   !contentType.includes('application/xml');
 
                     resolve({
                         statusCode: res.statusCode,
@@ -101,7 +170,15 @@ exports.handler = async (event, context) => {
                 });
             });
 
-            req.on('error', reject);
+            req.on('error', (error) => {
+                console.error('Request error:', error);
+                reject(error);
+            });
+
+            req.setTimeout(60000, () => {
+                req.destroy();
+                reject(new Error('Request timeout'));
+            });
 
             if (event.body) {
                 req.write(event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body);
@@ -110,6 +187,7 @@ exports.handler = async (event, context) => {
             req.end();
         });
 
+        console.log(`Response from target: ${response.statusCode}`);
         return response;
 
     } catch (error) {

@@ -75,7 +75,7 @@ resource "aws_alb_target_group" "lambda-app-target-group" {
   target_type = "lambda"
   health_check {
     enabled = true
-    path    = "/health"
+    path    = "/api/predict/health"
     # Lambda health checks use different settings
     interval            = 35
     timeout             = 30
