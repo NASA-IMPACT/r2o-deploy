@@ -18,30 +18,6 @@ output "lambda_role_arn" {
   value       = module.lambda.lambda_role_arn
 }
 
-
-## API Gateway outputs
-output "api_gateway_id" {
-  description = "ID of the API Gateway"
-  value       = module.api_gateway.api_id
-}
-
-output "api_gateway_invoke_url" {
-  description = "URL to invoke the API Gateway"
-  value       = module.api_gateway.invoke_url
-}
-#
-output "api_gateway_stage" {
-  description = "Stage name of the API Gateway"
-  value       = module.api_gateway.api_stage_name
-}
-
-# CloudFront outputs
-output "cloudfront_distribution_id" {
-  description = "ID of the CloudFront distribution"
-  value       = module.cloudfront.cloudfront_distribution_id
-}
-
-output "cloudfront_domain_name" {
-  description = "Domain name of the CloudFront distribution"
-  value       = module.cloudfront.cloudfront_domain_name
+output "proxy_url" {
+  value = module.alb.proxy_url
 }

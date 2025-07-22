@@ -5,17 +5,6 @@ variable "aws_region" {
 }
 
 
-variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
-  type        = string
-  default     = "10.0.0.0/16"
-}
-
-variable "availability_zones" {
-  description = "List of availability zones to deploy resources in"
-  type        = list(string)
-  default     = ["us-west-2a", "us-west-2b"]
-}
 
 variable "lambda_function_name" {
   description = "Name of the Lambda function"
@@ -38,7 +27,7 @@ variable "lambda_memory_size" {
 variable "lambda_timeout" {
   description = "Timeout for the Lambda function in seconds"
   type        = number
-  default     = 30
+  default     = 100
 }
 
 variable "lambda_environment_variables" {
@@ -69,6 +58,20 @@ variable "private_subnets_tagname" {
   default = "*private-subnet-*"
 }
 
-variable "api_name" {
-  default = "proxy-api"
+
+variable "fm_api_key" {
+  type = string
+  description = "API key for the FM service"
+}
+
+variable "public_subnets_tagname" {
+  type = string
+  default = "*public-subnet-*"
+}
+
+variable "subdomain" {
+  default = "dev"
+}
+variable "proxy_domain_name" {
+  default = "fm.dsig.net"
 }

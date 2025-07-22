@@ -2,6 +2,8 @@
 locals {
   lambda_env_vars = {
     TARGET_SERVER = var.target_server
+    API_KEY = var.fm_api_key
+
   }
 }
 
@@ -36,26 +38,17 @@ module "lambda" {
   vpc_id                       = var.vpc_id
 }
 
-# API Gateway Module
 
-module "api_gateway" {
-  source = "./api-gateway"
 
-  aws_region           = var.aws_region
-  api_name             = var.api_name
+module "alb" {
+  source = "./alb"
+  contact              = "r2o-maintainers"
   lambda_function_name = module.lambda.lambda_function_name
-  lambda_invoke_arn    = module.lambda.lambda_invoke_arn
   prefix               = var.prefix
-}
-
-# CloudFront Module - Updated to use direct outputs
-module "cloudfront" {
-  source             = "./cloudfront"
-  prefix             = var.prefix
-  origin_id          = "proxy-rest-api"
-  # Fix the domain format - extract only the hostname part without protocol and path
-  api_gateway_domain = replace(
-    replace(module.api_gateway.invoke_url, "/^https?:\\/\\//", ""),
-    "/\\/.*$/", ""
-  )
+  project              = "Research to Operation"
+  public_subnet_ids    = data.aws_subnets.public_subnets_id.ids
+  subdomain            = var.subdomain
+  vpc_id               = var.vpc_id
+  proxy_domain_name = var.proxy_domain_name
+  lambda_function_arn = module.lambda.lambda_function_arn
 }
