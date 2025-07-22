@@ -21,7 +21,7 @@ locals {
       app_name      = "predictor-app"
       project_name  = null
       repo_url      = "https://github.com/NASA-IMPACT/fm-inference-sagemaker"
-      target_path   = "mvp"
+      target_path   = "k8s-manifests"
       target_branch = var.prediction_branch
       private       = true
     }

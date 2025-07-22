@@ -100,7 +100,7 @@ variable "cloudfront_id" {
 variable "prediction_branch" {
   type = string
   description = "The branch in the prediction repository where the code will be deployed."
-  default = "feature/add-k8s-services"
+  default = "mvp"
 }
 variable "fastapi_branch" {
   type = string
