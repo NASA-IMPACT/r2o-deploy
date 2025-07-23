@@ -175,7 +175,9 @@ exports.handler = async (event, context) => {
                 reject(error);
             });
 
-            req.setTimeout(60000, () => {
+          const timeout_in_minutes  = process.env.TIMEOUT_IN_MINUTES
+          // Adding 10 seconds to the timeout in minutes
+            req.setTimeout((timeout_in_minutes * 60000) + 10000, () => {
                 req.destroy();
                 reject(new Error('Request timeout'));
             });

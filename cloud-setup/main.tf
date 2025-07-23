@@ -3,6 +3,7 @@ locals {
   lambda_env_vars = {
     TARGET_SERVER = var.target_server
     API_KEY = var.fm_api_key
+    TIMEOUT_IN_MINUTES = var.lambda_timeout_in_minutes
 
   }
 }
@@ -31,7 +32,7 @@ module "lambda" {
   lambda_function_name         = var.lambda_function_name
   lambda_memory_size           = var.lambda_memory_size
   lambda_runtime               = var.lambda_runtime
-  lambda_timeout               = var.lambda_timeout
+  lambda_timeout               = var.lambda_timeout_in_minutes * 60 # Because Lambda function timeout is in seconds, we multiply by 60
   permissions_boundary         = var.permissions_boundary
   prefix                       = var.prefix
   private_subnet_ids           = data.aws_subnets.private_subnets_id.ids

@@ -24,10 +24,10 @@ variable "lambda_memory_size" {
   default     = 128
 }
 
-variable "lambda_timeout" {
-  description = "Timeout for the Lambda function in seconds"
+variable "lambda_timeout_in_minutes" {
+  description = "Timeout for the Lambda function in minutes"
   type        = number
-  default     = 100
+  default     = 5
 }
 
 variable "lambda_environment_variables" {
