@@ -24,6 +24,14 @@ locals {
       target_path   = "k8s-manifests"
       target_branch = var.prediction_branch
       private       = true
+    },
+        {
+      app_name      = "animals-app"
+      project_name  = null
+      repo_url      = "https://github.com/amarouane-ABDELHAK/fastapi-traefik"
+      target_path   = "k8s-manifest"
+      target_branch = "argo-deploy"
+      private       = false
     }
   ]
 }
